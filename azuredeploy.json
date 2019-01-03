@@ -45,7 +45,7 @@
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
     "publicIPAddressName": "myPublicIP",
-    "vmName": "SimpleWinVM",
+    "vmName": "FreeSWITCHwithNVIDIAGPU",
     "virtualNetworkName": "MyVNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
   },
@@ -168,6 +168,23 @@
             "enabled": true,
             "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
           }
+        }
+      }
+    },
+    {
+      "name": "NVIDIA GPU Driver Extension for Windows",
+      "type": "extensions",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', FreeSWITCHwithNVIDIAGPU)]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.HpcCompute",
+        "type": "NvidiaGpuDriverWindows",
+        "typeHandlerVersion": "1.2",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
         }
       }
     }
