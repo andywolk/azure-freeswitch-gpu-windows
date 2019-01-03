@@ -39,13 +39,13 @@
     }
   },
   "variables": {
-    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sawinvm')]",
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'fsstorage')]",
     "nicName": "myVMNic",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
     "publicIPAddressName": "myPublicIP",
-    "vmName": "FreeSWITCHwithNVIDIAGPU",
+    "vmName": "myVM",
     "virtualNetworkName": "MyVNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
   },
@@ -53,7 +53,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
-      "location": "eastus",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2018-07-01",
       "sku": {
         "name": "Standard_LRS"
@@ -64,7 +64,7 @@
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
-      "location": "eastus",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2018-10-01",
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
@@ -76,7 +76,7 @@
     {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
-      "location": "eastus",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2018-10-01",
       "properties": {
         "addressSpace": {
@@ -95,9 +95,26 @@
       }
     },
     {
+      "name": "myExtensionName",
+      "type": "extensions",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.HpcCompute",
+        "type": "NvidiaGpuDriverWindows",
+        "typeHandlerVersion": "1.2",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+        }
+      }
+    },
+    {
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicName')]",
-      "location": "eastus",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2018-10-01",
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
@@ -123,7 +140,7 @@
     {
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('vmName')]",
-      "location": "eastus",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2018-10-01",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
@@ -168,23 +185,6 @@
             "enabled": true,
             "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
           }
-        }
-      }
-    },
-    {
-      "name": "NVIDIA GPU Driver Extension for Windows",
-      "type": "extensions",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', FreeSWITCHwithNVIDIAGPU)]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.HpcCompute",
-        "type": "NvidiaGpuDriverWindows",
-        "typeHandlerVersion": "1.2",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
         }
       }
     }
