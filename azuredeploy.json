@@ -71,7 +71,7 @@
     "networkSecurityGroupName": "FSGPU-nSG",
     "securityRules_Port_8082_Verto_name": "Port_8082_Verto",
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
-    "scriptFileName": "pemparametertofile.ps1",
+    "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
     "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"')]"
   },
