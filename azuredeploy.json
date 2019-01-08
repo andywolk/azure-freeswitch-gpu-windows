@@ -20,6 +20,12 @@
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
+    "sslCertificateForVertoInPEM": {
+      "type": "string",
+      "metadata": {
+        "description": "Ssl certificate in PEM format. Should start with -----BEGIN CERTIFICATE-----"
+      }
+    },
     "windowsOSVersion": {
       "type": "string",
       "defaultValue": "2016-Datacenter",
