@@ -49,7 +49,8 @@
     "virtualNetworkName": "FSGPU-VNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
     "networkSecurityGroupName": "FSGPU-nSG",
-    "securityRules_Port_8082_Verto_name": "Port_8082-Verto"
+    "securityRules_Port_8082_Verto_name": "Port_8082_Verto",
+    "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP"
   },
   "resources": [
     {
@@ -62,10 +63,28 @@
           {
             "name": "[variables('securityRules_Port_8082_Verto_name')]",
             "properties": {
+              "provisioningState": "Succeeded",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8082",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 200,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "[variables('securityRules_Port_10000_30000_RTP_name')]",
+            "properties": {
                "provisioningState": "Succeeded",
                "protocol": "*",
                "sourcePortRange": "*",
-               "destinationPortRange": "8082",
+               "destinationPortRange": "10000-30000",
                "sourceAddressPrefix": "*",
                "destinationAddressPrefix": "*",
                "access": "Allow",
@@ -86,10 +105,34 @@
       "apiVersion": "2018-08-01",
       "scale": null,
       "properties": {
+        "provisioningState": "Succeeded",
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "8082",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 200,
+        "direction": "Inbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_10000_30000_RTP_name'))]",
+      "apiVersion": "2018-08-01",
+      "scale": null,
+      "properties": {
           "provisioningState": "Succeeded",
           "protocol": "*",
           "sourcePortRange": "*",
-          "destinationPortRange": "8082",
+          "destinationPortRange": "10000-30000",
           "sourceAddressPrefix": "*",
           "destinationAddressPrefix": "*",
           "access": "Allow",
