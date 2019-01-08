@@ -48,7 +48,8 @@
     "vmName": "FSGPU-VM",
     "virtualNetworkName": "FSGPU-VNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
-    "networkSecurityGroupName": "FSGPU-nSG"
+    "networkSecurityGroupName": "FSGPU-nSG",
+    "securityRules_Port_8082_Verto_name": "Port_8082-Verto"
   },
   "resources": [
     {
@@ -58,8 +59,50 @@
       "location": "[parameters('location')]",
       "properties": {
         "securityRules": [
+          {
+            "name": "[variables('securityRules_Port_8082_Verto_name')]",
+            "properties": {
+               "provisioningState": "Succeeded",
+               "protocol": "*",
+               "sourcePortRange": "*",
+               "destinationPortRange": "8082",
+               "sourceAddressPrefix": "*",
+               "destinationAddressPrefix": "*",
+               "access": "Allow",
+               "priority": 100,
+               "direction": "Inbound",
+               "sourcePortRanges": [],
+               "destinationPortRanges": [],
+               "sourceAddressPrefixes": [],
+               "destinationAddressPrefixes": []
+            }
+          }
         ]
       }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_8082_Verto_name'))]",
+      "apiVersion": "2018-08-01",
+      "scale": null,
+      "properties": {
+          "provisioningState": "Succeeded",
+          "protocol": "*",
+          "sourcePortRange": "*",
+          "destinationPortRange": "8082",
+          "sourceAddressPrefix": "*",
+          "destinationAddressPrefix": "*",
+          "access": "Allow",
+          "priority": 100,
+          "direction": "Inbound",
+          "sourcePortRanges": [],
+          "destinationPortRanges": [],
+          "sourceAddressPrefixes": [],
+          "destinationAddressPrefixes": []
+      },
+      "dependsOn": [
+          "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+      ]
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
