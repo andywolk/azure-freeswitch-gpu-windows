@@ -5,4 +5,4 @@ param (
 
 $dest = "C:\Program Files\FreeSWITCH\cert"
 New-Item -Path $dest -ItemType directory
-$pemdata | Out-File "$dest\verto.pem"
+$pemdata | Out-File -encoding ASCII "$dest\verto.pem"
