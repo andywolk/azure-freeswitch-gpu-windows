@@ -60,7 +60,7 @@
       "metadata": {
         "description": "Allow RDP port (use for debugging)"
       },
-      "defaultValue": "false"
+      "defaultValue": false
     },
     "_artifactsLocation": {
       "type": "string",
@@ -130,7 +130,7 @@
               "destinationPortRange": "3389",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
-              "access": "if(parameters['enableRdp'], 'Allow', 'Deny')",
+              "access": "[if(parameters('enableRdp'), 'Allow', 'Deny')]",
               "priority": 200,
               "direction": "Inbound",
               "sourcePortRanges": [],
@@ -190,7 +190,7 @@
         "destinationPortRange": "3389",
         "sourceAddressPrefix": "*",
         "destinationAddressPrefix": "*",
-        "access": "if(parameters['enableRdp'], 'Allow', 'Deny')",
+        "access": "[if(parameters('enableRdp'), 'Allow', 'Deny')]",
         "priority": 200,
         "direction": "Inbound",
         "sourcePortRanges": [],
