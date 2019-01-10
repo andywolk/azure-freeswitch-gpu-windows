@@ -209,8 +209,7 @@
       "apiVersion": "2018-10-01",
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
-        "dnsSettings": {
-          "domainNameLabel": "[parameters('dnsLabelPrefix')]",
+        "dnsSettings": {          
           "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnszone'))]"
         }
       }
