@@ -210,7 +210,8 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+          "domainNameLabel": "[parameters('dnsLabelPrefix')]",
+          "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnszone'))]"
         }
       }
     },
