@@ -35,14 +35,14 @@
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
-    "dnszone": {
+    "dnsZone": {
       "type": "string",
       "metadata": {
         "description": "Name of DNS Zone to put VM host into."
       },
       "defaultValue": "azure.signalwire.com"
     },
-    "dnszoneresourcegroup": {
+    "dnsZoneResourceGroup": {
       "type": "string",
       "metadata": {
         "description": "ResourceGroupName of selected DNS Zone."
@@ -102,7 +102,7 @@
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnszone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', resourceGroup().name, '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"')]"
+    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnsZone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', parameters('dnsZoneResourceGroup'), '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"')]"
   },
   "resources": [
     {
@@ -219,7 +219,7 @@
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
           "domainNameLabel": "[parameters('dnsLabelPrefix')]",
-          "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnszone'))]"
+          "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnsZone'))]"
         }
       }
     },
