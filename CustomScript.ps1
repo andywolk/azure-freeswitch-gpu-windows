@@ -7,13 +7,10 @@ param (
     [string]$resourcegroup,
 	[string]$dnszoneresourcegroup,
     [string]$httpuser="anonymous",
-    [string]$httppass=""
+    [string]$httppass="",
+	[string]$msipackagesource
+	[string]$freeswitchmsifile
 )
-
-<# $publicIp = Get-AzureRmPublicIpAddress -Name $publicipname -ResourceGroupName $resourcegroup #>
-
-<# Add dns record to a zone #>
-<# New-AzureRmDnsRecordSet -Name $hostname -RecordType A -ZoneName $dnszone -ResourceGroupName $dnszoneresourcegroup -Ttl 5 -DnsRecords (New-AzureRmDnsRecordConfig -IPv4Address "$publicIp") #>
 
 <# Install a PEM file from Azure ARM template parameter #>
 $dest = "C:\Program Files\FreeSWITCH\cert"
@@ -31,12 +28,12 @@ $basicAuthValue = "Basic $encodedCreds"
 $Headers = @{
     Authorization = $basicAuthValue
 }
-$freeswitchmsi = "FreeSWITCH-1.8.4-x64-Release.msi"
-$source = "http://files.freeswitch.org/windows/installer/x64/$freeswitchmsi"
+
+$source = "${msipackagesource}${freeswitchmsifile}"
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
 <# Start downloading #>
-Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\$freeswitchmsi"
+Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\$freeswitchmsifile"
 
 $spath="$dest\$freeswitchmsi"
 

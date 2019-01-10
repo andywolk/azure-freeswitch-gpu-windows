@@ -66,6 +66,27 @@
       },
       "defaultValue": "No"
     },
+    "freeswitchMsiFile": {
+      "type": "string",
+      "allowedValues": [
+        "FreeSWITCH-1.8.4-x64-Release.msi"
+      ],
+      "metadata": {
+        "description": "Select file to install (may require authorization)."
+      },
+      "defaultValue": "FreeSWITCH-1.8.4-x64-Release.msi"
+    },
+    "MsiPackageSource": {
+      "type": "string",
+      "allowedValues": [
+        "http://files.freeswitch.org/windows/installer/x64/",
+        "https://fsa.freeswitch.com/azure/"
+      ],
+      "metadata": {
+        "description": "Select URL to download FreeSWITCH msi package from (may require authorization)."
+      },
+      "defaultValue": "http://files.freeswitch.org/windows/installer/x64/"
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -99,7 +120,7 @@
     }
   },
   "variables": {
-    "nvidiaextensionname": "[concat(variables('vmName'), '/', 'NVIDIAGPUDrivers')]" ,
+    "nvidiaextensionname": "[concat(variables('vmName'), '/', 'NVIDIAGPUDrivers')]",
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'fsstorage')]",
     "nicName": "FSGPU-VMNic",
     "addressPrefix": "10.0.0.0/16",
@@ -116,7 +137,7 @@
     "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnsZone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', parameters('dnsZoneResourceGroup'), '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"')]"
+    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnsZone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', parameters('dnsZoneResourceGroup'), '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"', '-msipackagesource \"', parameters('MsiPackageSource'), '\"', '-freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"')]"
 
   },
   "resources": [
