@@ -26,7 +26,7 @@ New-Item -Path $dest -ItemType directory
 
 <# Download FreeSWITCH msi package #>
 $freeswitchmsi = "FreeSWITCH-1.8.4-x64-Release.msi"
-$source = "http://$httpuser:$httppass@files.freeswitch.org/windows/installer/x64/$freeswitchmsi"
+$source = "http://${httpuser}:${httppass}@files.freeswitch.org/windows/installer/x64/$freeswitchmsi"
 Invoke-WebRequest $source -OutFile "$dest\$freeswitchmsi"
 
 $spath="$dest\$freeswitchmsi"
