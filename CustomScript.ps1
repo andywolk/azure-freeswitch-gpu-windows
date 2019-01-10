@@ -1,21 +1,36 @@
-<# Custom Script for Windows to install a PEM file from Azure ARM template parameter #>
+<# Custom Script for Windows to configure FreeSWITCH using data from Azure ARM template parameters #>
 param (
-    [string]$pemdata
+    [string]$pemdata,
+    [string]$hostname,
+    [string]$dnszone,
+	[string]$publicipname,
+    [string]$resourcegroup,
+    [string]$httpuser="anonymous",
+    [string]$httppass=""
 )
 
+$publicIp = Get-AzureRmPublicIpAddress -Name $publicipname -ResourceGroupName $resourcegroup
+
+<# Add dns record to a zone #>
+New-AzureRmDnsRecordSet -Name $hostname -RecordType A -ZoneName $dnszone -ResourceGroupName $resourcegroup -Ttl 5 -DnsRecords (New-AzureRmDnsRecordConfig -IPv4Address "$publicIp")
+
+<# Install a PEM file from Azure ARM template parameter #>
 $dest = "C:\Program Files\FreeSWITCH\cert"
 New-Item -Path $dest -ItemType directory
 $pemdata | Out-File -encoding ASCII "$dest\verto.pem"
 
+<# Create a folder to store FreeSWITCH msi package #>
 $dest = "C:\freeswitchmsi"
 New-Item -Path $dest -ItemType directory
 
+<# Download FreeSWITCH msi package #>
 $freeswitchmsi = "FreeSWITCH-1.8.4-x64-Release.msi"
-$source = "http://files.freeswitch.org/windows/installer/x64/$freeswitchmsi"
+$source = "http://$httpuser:$httppass@files.freeswitch.org/windows/installer/x64/$freeswitchmsi"
 Invoke-WebRequest $source -OutFile "$dest\$freeswitchmsi"
 
 $spath="$dest\$freeswitchmsi"
 
+<# Install FreeSWITCH msi package silently #>
 If($global:availability -eq $null) 
 { 
     "1. Local Administrator software is not installed in this computer" 

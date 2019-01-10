@@ -14,11 +14,32 @@
         "description": "Password for the Virtual Machine."
       }
     },
+    "httpUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Username to download FreeSWITCH msi package."
+      },
+      "defaultValue": "anonymous"
+    },
+    "httpPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password to download FreeSWITCH msi package."
+      },
+      "defaultValue": ""
+    },
     "dnsLabelPrefix": {
       "type": "string",
       "metadata": {
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
+    },
+    "dnszone": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of DNS Zone to put VM host into."
+      },
+      "defaultValue": "azure.signalwire.com"
     },
     "sslCertificateForVertoInPEM": {
       "type": "string",
@@ -73,7 +94,7 @@
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"')]"
+    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnszone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"')]"
   },
   "resources": [
     {
@@ -189,7 +210,8 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+          "domainNameLabel": "[parameters('dnsLabelPrefix')]",
+          "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnszone'))]"
         }
       }
     },
