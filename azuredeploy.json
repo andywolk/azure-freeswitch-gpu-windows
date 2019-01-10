@@ -127,7 +127,7 @@
         "TTL": 5,
         "ARecords": [
           {
-            "ipv4Address": "[reference(variables('publicIPAddressName')).ipAddress]"
+            "ipv4Address": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).ipAddress]"
           }
         ]
       },
