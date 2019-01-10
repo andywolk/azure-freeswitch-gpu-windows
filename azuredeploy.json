@@ -102,7 +102,7 @@
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnszone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', parameters('dnszoneresourcegroup'), '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"')]"
+    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnszone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', resourceGroup().name, '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"')]"
   },
   "resources": [
     {
