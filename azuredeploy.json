@@ -127,12 +127,12 @@
         "TTL": 5,
         "ARecords": [
           {
-            "ipv4Address": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).ipAddress]"
+            "ipv4Address": "[reference(variables('publicIPAddressName')).ipAddress]"
           }
         ]
       },
       "dependsOn": [
-        "resourceId('Microsoft.Network/publicIPAddresses/'", "variables('publicIPAddressName'))"
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
       ]
     },
     {
@@ -288,7 +288,7 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2018-10-01",
       "properties": {
-        "publicIPAllocationMethod": "Dynamic",
+        "publicIPAllocationMethod": "Static",
         "dnsSettings": {
           "domainNameLabel": "[parameters('dnsLabelPrefix')]",
           "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnsZone'))]"
