@@ -25,9 +25,18 @@ $dest = "C:\freeswitchmsi"
 New-Item -Path $dest -ItemType directory
 
 <# Download FreeSWITCH msi package #>
+$pair = "${httpuser}:${httppass}"
+$encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($pair))
+$basicAuthValue = "Basic $encodedCreds"
+$Headers = @{
+    Authorization = $basicAuthValue
+}
 $freeswitchmsi = "FreeSWITCH-1.8.4-x64-Release.msi"
-$source = "http://${httpuser}:${httppass}@files.freeswitch.org/windows/installer/x64/$freeswitchmsi"
-Invoke-WebRequest $source -OutFile "$dest\$freeswitchmsi"
+$source = "http://files.freeswitch.org/windows/installer/x64/$freeswitchmsi"
+<# Speed up downloading #>
+$ProgressPreference = 'SilentlyContinue'
+<# Start downloading #>
+Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\$freeswitchmsi"
 
 $spath="$dest\$freeswitchmsi"
 
