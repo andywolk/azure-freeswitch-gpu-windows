@@ -95,6 +95,7 @@
     "subnetPrefix": "10.0.0.0/24",
     "publicIPAddressName": "FSGPU-PublicIP",
     "vmName": "FSGPU-VM",
+    "extensionName": "CustomScriptExtension",
     "virtualNetworkName": "FSGPU-VNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
     "networkSecurityGroupName": "FSGPU-nSG",
@@ -265,7 +266,10 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
         }
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('extensionName'))]"
+      ]
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
@@ -349,7 +353,7 @@
       "resources": [
         {
           "type": "extensions",
-          "name": "CustomScriptExtension",
+          "name": "[variables('extensionName')]",
           "apiVersion": "2017-03-30",
           "location": "[parameters('location')]",
           "dependsOn": [
