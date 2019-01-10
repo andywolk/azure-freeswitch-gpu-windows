@@ -56,11 +56,15 @@
       }
     },
     "enableRdp": {
-      "type": "bool",
+      "type": "string",
+      "allowedValues": [
+        "Yes",
+        "No"
+      ],
       "metadata": {
         "description": "Allow RDP port (use for debugging)"
       },
-      "defaultValue": false
+      "defaultValue": "No"
     },
     "_artifactsLocation": {
       "type": "string",
@@ -130,8 +134,8 @@
               "destinationPortRange": "3389",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
-              "access": "[if(parameters('enableRdp'), 'Allow', 'Deny')]",
-              "priority": 200,
+              "access": "[if(equals(parameters('enableRdp'), 'Yes'), 'Allow', 'Deny')]",
+              "priority": 300,
               "direction": "Inbound",
               "sourcePortRanges": [],
               "destinationPortRanges": [],
@@ -190,8 +194,8 @@
         "destinationPortRange": "3389",
         "sourceAddressPrefix": "*",
         "destinationAddressPrefix": "*",
-        "access": "[if(parameters('enableRdp'), 'Allow', 'Deny')]",
-        "priority": 200,
+        "access": "[if(equals(parameters('enableRdp'), 'Yes'), 'Allow', 'Deny')]",
+        "priority": 300,
         "direction": "Inbound",
         "sourcePortRanges": [],
         "destinationPortRanges": [],
