@@ -5,6 +5,7 @@ param (
     [string]$dnszone,
 	[string]$publicipname,
     [string]$resourcegroup,
+	[string]$dnszoneresourcegroup,
     [string]$httpuser="anonymous",
     [string]$httppass=""
 )
@@ -12,7 +13,7 @@ param (
 $publicIp = Get-AzureRmPublicIpAddress -Name $publicipname -ResourceGroupName $resourcegroup
 
 <# Add dns record to a zone #>
-New-AzureRmDnsRecordSet -Name $hostname -RecordType A -ZoneName $dnszone -ResourceGroupName $resourcegroup -Ttl 5 -DnsRecords (New-AzureRmDnsRecordConfig -IPv4Address "$publicIp")
+New-AzureRmDnsRecordSet -Name $hostname -RecordType A -ZoneName $dnszone -ResourceGroupName $dnszoneresourcegroup -Ttl 5 -DnsRecords (New-AzureRmDnsRecordConfig -IPv4Address "$publicIp")
 
 <# Install a PEM file from Azure ARM template parameter #>
 $dest = "C:\Program Files\FreeSWITCH\cert"
