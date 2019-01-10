@@ -8,7 +8,7 @@ param (
 	[string]$dnszoneresourcegroup,
     [string]$httpuser="anonymous",
     [string]$httppass="",
-	[string]$msipackagesource
+	[string]$msipackagesource,
 	[string]$freeswitchmsifile
 )
 
@@ -61,3 +61,8 @@ Else
 { 
     "1. Local Administrator software is already existing" 
 }
+
+<# Enable FreeSWITCH service to start with the system #>
+Set-Service -Name "FreeSWITCH" -StartupType Automatic
+<# Start FreeSWITCH service! #>
+Start-Service -Name "FreeSWITCH"
