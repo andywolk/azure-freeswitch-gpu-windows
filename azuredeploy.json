@@ -119,6 +119,23 @@
   },
   "resources": [
     {
+      "type": "microsoft.network/dnszones/a",
+      "name": "[concat(parameters('dnsZone'), '/', parameters('dnsLabelPrefix'))]",
+      "apiVersion": "2015-05-04-preview",
+      "location": "global",
+      "properties": {
+        "TTL": 3600,
+        "ARecords": [
+          {
+            "ipv4Address": "[reference(variables('publicIPAddressName')).ipAddress]"
+          }
+        ]
+      },
+      "dependsOn": [
+        "resourceId('Microsoft.Network/publicIPAddresses/'", "variables('publicIPAddressName'))"
+      ]
+    },
+    {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('networkSecurityGroupName')]",
