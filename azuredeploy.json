@@ -55,6 +55,13 @@
         "description": "Ssl certificate in PEM format. Should start with -----BEGIN CERTIFICATE-----"
       }
     },
+    "enableRdp": {
+      "type": "bool",
+      "metadata": {
+        "description": "Allow RDP port (use for debugging)"
+      },
+      "defaultValue": "false"
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -101,6 +108,7 @@
     "networkSecurityGroupName": "FSGPU-nSG",
     "securityRules_Port_8082_Verto_name": "Port_8082_Verto",
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
+    "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
     "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnsZone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', parameters('dnsZoneResourceGroup'), '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"')]"
@@ -114,6 +122,24 @@
       "properties": {
         "securityRules": [
           {
+            "name": "[variables('securityRules_Port_3389_RDP_name')]",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "if(parameters['enableRdp'], 'Allow', 'Deny')",
+              "priority": 200,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          },
+          {
             "name": "[variables('securityRules_Port_8082_Verto_name')]",
             "properties": {
               "provisioningState": "Succeeded",
@@ -125,32 +151,56 @@
               "access": "Allow",
               "priority": 200,
               "direction": "Inbound",
-              "sourcePortRanges": [ ],
-              "destinationPortRanges": [ ],
-              "sourceAddressPrefixes": [ ],
-              "destinationAddressPrefixes": [ ]
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
             }
           },
           {
             "name": "[variables('securityRules_Port_10000_30000_RTP_name')]",
             "properties": {
-               "provisioningState": "Succeeded",
-               "protocol": "*",
-               "sourcePortRange": "*",
-               "destinationPortRange": "10000-30000",
-               "sourceAddressPrefix": "*",
-               "destinationAddressPrefix": "*",
-               "access": "Allow",
-               "priority": 100,
-               "direction": "Inbound",
-               "sourcePortRanges": [],
-               "destinationPortRanges": [],
-               "sourceAddressPrefixes": [],
-               "destinationAddressPrefixes": []
+              "provisioningState": "Succeeded",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "10000-30000",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
             }
           }
         ]
       }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_3389_RDP_name'))]",
+      "apiVersion": "2018-08-01",
+      "scale": null,
+      "properties": {
+        "provisioningState": "Succeeded",
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "3389",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "if(parameters['enableRdp'], 'Allow', 'Deny')",
+        "priority": 200,
+        "direction": "Inbound",
+        "sourcePortRanges": [],
+        "destinationPortRanges": [],
+        "sourceAddressPrefixes": [],
+        "destinationAddressPrefixes": []
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+      ]
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
@@ -167,10 +217,10 @@
         "access": "Allow",
         "priority": 200,
         "direction": "Inbound",
-        "sourcePortRanges": [ ],
-        "destinationPortRanges": [ ],
-        "sourceAddressPrefixes": [ ],
-        "destinationAddressPrefixes": [ ]
+        "sourcePortRanges": [],
+        "destinationPortRanges": [],
+        "sourceAddressPrefixes": [],
+        "destinationAddressPrefixes": []
       },
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
@@ -182,22 +232,22 @@
       "apiVersion": "2018-08-01",
       "scale": null,
       "properties": {
-          "provisioningState": "Succeeded",
-          "protocol": "*",
-          "sourcePortRange": "*",
-          "destinationPortRange": "10000-30000",
-          "sourceAddressPrefix": "*",
-          "destinationAddressPrefix": "*",
-          "access": "Allow",
-          "priority": 100,
-          "direction": "Inbound",
-          "sourcePortRanges": [],
-          "destinationPortRanges": [],
-          "sourceAddressPrefixes": [],
-          "destinationAddressPrefixes": []
+        "provisioningState": "Succeeded",
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "10000-30000",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 100,
+        "direction": "Inbound",
+        "sourcePortRanges": [],
+        "destinationPortRanges": [],
+        "sourceAddressPrefixes": [],
+        "destinationAddressPrefixes": []
       },
       "dependsOn": [
-          "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
       ]
     },
     {
@@ -209,7 +259,7 @@
         "name": "Standard_LRS"
       },
       "kind": "Storage",
-      "properties": { }
+      "properties": {}
     },
     {
       "type": "Microsoft.Network/publicIPAddresses",
@@ -282,7 +332,7 @@
       ],
       "properties": {
         "networkSecurityGroup": {
-            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
         },
         "ipConfigurations": [
           {
@@ -357,23 +407,23 @@
           "apiVersion": "2017-03-30",
           "location": "[parameters('location')]",
           "dependsOn": [
-              "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
-            ],
-            "properties": {
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+          ],
+          "properties": {
             "publisher": "Microsoft.Compute",
             "type": "CustomScriptExtension",
             "typeHandlerVersion": "1.8",
             "autoUpgradeMinorVersion": true,
             "settings": {
               "fileUris": [
-                 "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"              
+                "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
               "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
             }
           }
         }
       ]
-    }    
+    }
   ],
   "outputs": {
     "hostname": {
