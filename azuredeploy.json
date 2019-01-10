@@ -99,6 +99,7 @@
     }
   },
   "variables": {
+    "nvidiaextensionname": "[concat(variables('vmName'), '/', 'NVIDIAGPUDrivers')]" ,
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'fsstorage')]",
     "nicName": "FSGPU-VMNic",
     "addressPrefix": "10.0.0.0/16",
@@ -116,6 +117,7 @@
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
     "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnsZone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', parameters('dnsZoneResourceGroup'), '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"')]"
+
   },
   "resources": [
     {
@@ -325,10 +327,11 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmName'),'/', 'NVIDIAGPUDrivers')]",
+      "name": "[variables('nvidiaextensionname')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]",
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('extensionName'))]"
       ],
       "properties": {
         "publisher": "Microsoft.HpcCompute",
@@ -337,10 +340,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
         }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('extensionName'))]"
-      ]
+      }      
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
