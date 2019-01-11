@@ -29,17 +29,14 @@ $ProgressPreference = 'SilentlyContinue'
 
 <# Install a PEM file from Azure ARM template parameter or attempt downloading if none provided #>
 IF([string]::IsNullOrWhiteSpace($pemdata)) {            
-	$source = "${msipackagesource}verto.pem"    
-	"Invoke-WebRequest -Uri $source -Headers $Headers -OutFile ${pemdest}\verto.pem"
+	$source = "${msipackagesource}verto.pem"    	
+	Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "${pemdest}\verto.pem"
 } else {            
     $pemdata | Out-File -encoding ASCII "$dest\verto.pem"
 }   
 
 <# Download FreeSWITCH msi package #>
 $source = "${msipackagesource}${freeswitchmsifile}"
-
-<# Debug logging #>
-"Invoke-WebRequest -Uri $source -Headers $Headers -OutFile ${dest}\${freeswitchmsifile}"
 
 <# Start downloading #>
 Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\$freeswitchmsifile"
