@@ -9,12 +9,12 @@ param (
 )
 
 <# Create a folder for a PEM file #>
-$dest = "C:\Program Files\FreeSWITCH\cert"
-New-Item -Path $dest -ItemType directory
+$pemdest = "C:\Program Files\FreeSWITCH\cert"
+New-Item -Path $pemdest -ItemType directory
 
 <# Create a folder to store FreeSWITCH msi package #>
-$pemdest = "C:\freeswitchmsi"
-New-Item -Path $pemdest -ItemType directory
+$dest = "C:\freeswitchmsi"
+New-Item -Path $dest -ItemType directory
 
 <# HTTP AUTH #>
 $pair = "${httpuser}:${httppass}"
