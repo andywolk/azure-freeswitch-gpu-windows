@@ -395,24 +395,6 @@
               ]
             },
             {
-              "apiVersion": "2015-06-15",
-              "type": "Microsoft.Compute/virtualMachines/extensions",
-              "name": "[variables('nvidiaextensionname')]",
-              "location": "[resourceGroup().location]",
-              "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('extensionName'))]"
-              ],
-              "properties": {
-                "publisher": "Microsoft.HpcCompute",
-                "type": "NvidiaGpuDriverWindows",
-                "typeHandlerVersion": "1.2",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                }
-              }
-            },
-            {
               "type": "Microsoft.Network/networkInterfaces",
               "name": "[variables('nicName')]",
               "location": "[resourceGroup().location]",
@@ -493,6 +475,24 @@
               },
               "resources": [
                 {
+                  "apiVersion": "2015-06-15",
+                  "type": "extensions",
+                  "name": "[variables('nvidiaextensionname')]",
+                  "location": "[resourceGroup().location]",
+                  "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]",
+                    "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('extensionName'))]"
+                  ],
+                  "properties": {
+                    "publisher": "Microsoft.HpcCompute",
+                    "type": "NvidiaGpuDriverWindows",
+                    "typeHandlerVersion": "1.2",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                    }
+                  }
+                },
+                {
                   "type": "extensions",
                   "name": "[variables('extensionName')]",
                   "apiVersion": "2017-03-30",
@@ -520,7 +520,7 @@
                   "location": "[parameters('location')]",
                   "dependsOn": [
                     "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]",
-                    "[concat('Microsoft.Compute/virtualMachines/extensions/', variables('nvidiaextensionname'))]"
+                    "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('nvidiaextensionname'))]"                    
                   ],
                   "properties": {
                     "publisher": "Microsoft.Compute",
