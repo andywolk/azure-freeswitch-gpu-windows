@@ -160,6 +160,7 @@
     "publicIPAddressName": "FSGPU-PublicIP",
     "vmName": "FSGPU-VM",
     "extensionName": "CustomScriptExtension",
+    "finishScriptExtensionName": "FinishCustomScriptExtension",
     "virtualNetworkName": "FSGPU-VNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
     "networkSecurityGroupName": "FSGPU-nSG",
@@ -167,9 +168,9 @@
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
     "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
     "scriptFileName": "CustomScript.ps1",
+    "finishScriptFileName": "FinishCustomScript.ps1",
     "scriptFolder": ".",
     "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', ' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -httpuser \"', parameters('httpUsername'), '\"', ' -httppass \"', parameters('httpPassword'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"')]"
-
   },
   "resources": [
     {
@@ -509,6 +510,27 @@
                         "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
                       ],
                       "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
+                    }
+                  }
+                },
+                {
+                  "type": "extensions",
+                  "name": "[variables('finishScriptExtensionName')]",
+                  "apiVersion": "2017-03-30",
+                  "location": "[parameters('location')]",
+                  "dependsOn": [                    
+                    "[concat('Microsoft.Compute/virtualMachines/extensions', variables('nvidiaextensionname'))]"
+                  ],
+                  "properties": {
+                    "publisher": "Microsoft.Compute",
+                    "type": "CustomScriptExtension",
+                    "typeHandlerVersion": "1.8",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "fileUris": [
+                        "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('finishScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+                      ],
+                      "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('finishScriptFileName'))]"
                     }
                   }
                 }
