@@ -70,6 +70,7 @@ Else
 
 <# Start downloading Ruby #>
 $rubyurl="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.0-1/rubyinstaller-devkit-2.6.0-1-x64.exe"
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Invoke-WebRequest -Uri $rubyurl -OutFile "$dest\ruby.exe"
 
 <# Install Ruby #>
