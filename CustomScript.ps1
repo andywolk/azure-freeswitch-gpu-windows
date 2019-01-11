@@ -2,12 +2,8 @@
 param (
     [string]$pemdata,
     [string]$hostname,
-    [string]$dnszone,
-	[string]$publicipname,
-    [string]$resourcegroup,
-	[string]$dnszoneresourcegroup,
-    [string]$httpuser="anonymous",
-    [string]$httppass="",
+    [string]$httpuser,
+    [string]$httppass,
 	[string]$msipackagesource,
 	[string]$freeswitchmsifile
 )

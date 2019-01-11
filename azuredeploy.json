@@ -42,13 +42,6 @@
       },
       "defaultValue": "azure.signalwire.com"
     },
-    "dnsZoneResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "ResourceGroupName of selected DNS Zone."
-      },
-      "defaultValue": "SignalWire"
-    },
     "sslCertificateForVertoInPEM": {
       "type": "string",
       "metadata": {
@@ -137,7 +130,7 @@
     "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', '-hostname \"', parameters('dnsLabelPrefix'), '\"', '-dnszone \"', parameters('dnsZone'), '\"', '-publicipname \"', variables('publicIPAddressName'), '\"', '-resourcegroup \"', resourceGroup().name, '\"', '-dnszoneresourcegroup \"', parameters('dnsZoneResourceGroup'), '\"', '-httpuser \"', parameters('httpUsername'), '\"', '-httppass \"', parameters('httpPassword'), '\"', '-msipackagesource \"', parameters('MsiPackageSource'), '\"', '-freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"')]"
+    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', ' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -httpuser \"', parameters('httpUsername'), '\"', ' -httppass \"', parameters('httpPassword'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"')]"
 
   },
   "resources": [
