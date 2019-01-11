@@ -519,7 +519,7 @@
                   "apiVersion": "2017-03-30",
                   "location": "[parameters('location')]",
                   "dependsOn": [                    
-                    "[concat('Microsoft.Compute/virtualMachines/extensions', variables('nvidiaextensionname'))]"
+                    "[concat('Microsoft.Compute/virtualMachines/extensions/', variables('nvidiaextensionname'))]"
                   ],
                   "properties": {
                     "publisher": "Microsoft.Compute",
