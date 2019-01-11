@@ -35,7 +35,7 @@ $ProgressPreference = 'SilentlyContinue'
 <# Start downloading #>
 Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\$freeswitchmsifile"
 
-$spath="$dest\$freeswitchmsi"
+$spath="$dest\$freeswitchmsifile"
 
 <# Install FreeSWITCH msi package silently #>
 If($global:availability -eq $null) 
