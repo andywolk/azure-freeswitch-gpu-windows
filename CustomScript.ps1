@@ -32,6 +32,11 @@ $Headers = @{
 $source = "${msipackagesource}${freeswitchmsifile}"
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
+
+<# Debug logging #>
+$Headers | Out-String
+"Invoke-WebRequest -Uri $source -Headers $Headers -OutFile ${dest}\${freeswitchmsifile}"
+
 <# Start downloading #>
 Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\$freeswitchmsifile"
 
