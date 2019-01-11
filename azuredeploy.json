@@ -67,8 +67,9 @@
     "sslCertificateForVertoInPEM": {
       "type": "string",
       "metadata": {
-        "description": "Ssl certificate in PEM format. Should start with -----BEGIN CERTIFICATE-----"
-      }
+        "description": "Ssl certificate in PEM format. Should start with -----BEGIN CERTIFICATE-----. Will be downloaded if empty."
+      },
+      "defaultValue": ""
     },
     "enableRdp": {
       "type": "string",

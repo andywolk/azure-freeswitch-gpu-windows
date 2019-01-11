@@ -8,16 +8,15 @@ param (
 	[string]$freeswitchmsifile
 )
 
-<# Install a PEM file from Azure ARM template parameter #>
+<# Create a folder for a PEM file #>
 $dest = "C:\Program Files\FreeSWITCH\cert"
 New-Item -Path $dest -ItemType directory
-$pemdata | Out-File -encoding ASCII "$dest\verto.pem"
 
 <# Create a folder to store FreeSWITCH msi package #>
-$dest = "C:\freeswitchmsi"
-New-Item -Path $dest -ItemType directory
+$pemdest = "C:\freeswitchmsi"
+New-Item -Path $pemdest -ItemType directory
 
-<# Download FreeSWITCH msi package #>
+<# HTTP AUTH #>
 $pair = "${httpuser}:${httppass}"
 $encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($pair))
 $basicAuthValue = "Basic $encodedCreds"
@@ -25,12 +24,21 @@ $Headers = @{
     Authorization = $basicAuthValue
 }
 
-$source = "${msipackagesource}${freeswitchmsifile}"
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
 
+<# Install a PEM file from Azure ARM template parameter or attempt downloading if none provided #>
+IF([string]::IsNullOrWhiteSpace($pemdata)) {            
+	$source = "${msipackagesource}verto.pem"    
+	"Invoke-WebRequest -Uri $source -Headers $Headers -OutFile ${pemdest}\verto.pem"
+} else {            
+    $pemdata | Out-File -encoding ASCII "$dest\verto.pem"
+}   
+
+<# Download FreeSWITCH msi package #>
+$source = "${msipackagesource}${freeswitchmsifile}"
+
 <# Debug logging #>
-$Headers | Out-String
 "Invoke-WebRequest -Uri $source -Headers $Headers -OutFile ${dest}\${freeswitchmsifile}"
 
 <# Start downloading #>
