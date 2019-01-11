@@ -518,7 +518,8 @@
                   "name": "[variables('finishScriptExtensionName')]",
                   "apiVersion": "2017-03-30",
                   "location": "[parameters('location')]",
-                  "dependsOn": [                    
+                  "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]",
                     "[concat('Microsoft.Compute/virtualMachines/extensions/', variables('nvidiaextensionname'))]"
                   ],
                   "properties": {
