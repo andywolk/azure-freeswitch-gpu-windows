@@ -80,6 +80,13 @@
       },
       "defaultValue": "azure.signalwire.com"
     },
+    "dnszoneresoursegroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resourse Group where selected DNS Zone is hosted."
+      },
+      "defaultValue": "SignalWire"
+    },    
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -139,7 +146,7 @@
       "apiVersion": "2017-05-10",
       "name": "nestedTemplate",
       "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "TestResourceGroup",
+      "resourceGroup": "[parameters('dnszoneresoursegroup')]",
       "properties": {
         "mode": "Incremental",
         "template": {
