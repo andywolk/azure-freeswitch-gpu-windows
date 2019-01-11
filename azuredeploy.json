@@ -35,13 +35,6 @@
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
-    "dnsZone": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of DNS Zone to put VM host into."
-      },
-      "defaultValue": "azure.signalwire.com"
-    },
     "sslCertificateForVertoInPEM": {
       "type": "string",
       "metadata": {
@@ -80,6 +73,13 @@
       },
       "defaultValue": "http://files.freeswitch.org/windows/installer/x64/"
     },
+    "dnsZone": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of DNS Zone to put VM host into."
+      },
+      "defaultValue": "azure.signalwire.com"
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -113,6 +113,7 @@
     }
   },
   "variables": {
+    "rootresourcegroupname": "[resourceGroup().name]",
     "nvidiaextensionname": "[concat(variables('vmName'), '/', 'NVIDIAGPUDrivers')]",
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'fsstorage')]",
     "nicName": "FSGPU-VMNic",
@@ -135,335 +136,352 @@
   },
   "resources": [
     {
-      "type": "microsoft.network/dnszones/a",
-      "name": "[concat(parameters('dnsZone'), '/', parameters('dnsLabelPrefix'))]",
-      "apiVersion": "2015-05-04-preview",
-      "location": "global",
+      "apiVersion": "2017-05-10",
+      "name": "nestedTemplate",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "TestResourceGroup",
       "properties": {
-        "TTL": 5,
-        "ARecords": [
-          {
-            "ipv4Address": "[reference(variables('publicIPAddressName')).ipAddress]"
-          }
-        ]
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
-      ]
-    },
-    {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[variables('networkSecurityGroupName')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "[variables('securityRules_Port_3389_RDP_name')]",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "[if(equals(parameters('enableRdp'), 'Yes'), 'Allow', 'Deny')]",
-              "priority": 300,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
-            "name": "[variables('securityRules_Port_8082_Verto_name')]",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "8082",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 200,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
-            "name": "[variables('securityRules_Port_10000_30000_RTP_name')]",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "10000-30000",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_3389_RDP_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "3389",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "[if(equals(parameters('enableRdp'), 'Yes'), 'Allow', 'Deny')]",
-        "priority": 300,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_8082_Verto_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "8082",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 200,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_10000_30000_RTP_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "10000-30000",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 100,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2018-07-01",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "kind": "Storage",
-      "properties": {}
-    },
-    {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('publicIPAddressName')]",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2018-10-01",
-      "properties": {
-        "publicIPAllocationMethod": "Static",
-        "dnsSettings": {
-          "domainNameLabel": "[parameters('dnsLabelPrefix')]",
-          "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnsZone'))]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[variables('virtualNetworkName')]",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2018-10-01",
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[variables('addressPrefix')]"
-          ]
-        },
-        "subnets": [
-          {
-            "name": "[variables('subnetName')]",
-            "properties": {
-              "addressPrefix": "[variables('subnetPrefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-              }
-            }
-          }
-        ]
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[variables('nvidiaextensionname')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]",
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('extensionName'))]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.HpcCompute",
-        "type": "NvidiaGpuDriverWindows",
-        "typeHandlerVersion": "1.2",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-        }
-      }      
-    },
-    {
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('nicName')]",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2018-10-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
-      ],
-      "properties": {
-        "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-        },
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "type": "microsoft.network/dnszones/a",
+              "name": "[concat(parameters('dnsZone'), '/', parameters('dnsLabelPrefix'))]",
+              "apiVersion": "2015-05-04-preview",
+              "location": "global",
+              "properties": {
+                "TTL": 5,
+                "ARecords": [
+                  {
+                    "ipv4Address": "[reference(resourceId(variables('rootresourcegroupname'), 'Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).ipAddress]"
+                  }
+                ]
               },
-              "subnet": {
-                "id": "[variables('subnetRef')]"
-              }
+              "dependsOn": [
+                "[resourceId(variables('rootresourcegroupname'), 'Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+              ]
             }
-          }
-        ]
+          ]
+        }
       }
     },
-    {
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "[variables('vmName')]",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2018-10-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
-      ],
-      "properties": {
-        "hardwareProfile": {
-          "vmSize": "Standard_NC6"
-        },
-        "osProfile": {
-          "computerName": "[variables('vmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "[parameters('windowsOSVersion')]",
-            "version": "latest"
-          },
-          "osDisk": {
-            "createOption": "FromImage"
-          },
-          "dataDisks": [
             {
-              "diskSizeGB": 1023,
-              "lun": 0,
-              "createOption": "Empty"
-            }
-          ]
-        },
-        "networkProfile": {
-          "networkInterfaces": [
+              "apiVersion": "2015-06-15",
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "name": "[variables('networkSecurityGroupName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "[variables('securityRules_Port_3389_RDP_name')]",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "3389",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "[if(equals(parameters('enableRdp'), 'Yes'), 'Allow', 'Deny')]",
+                      "priority": 300,
+                      "direction": "Inbound",
+                      "sourcePortRanges": [],
+                      "destinationPortRanges": [],
+                      "sourceAddressPrefixes": [],
+                      "destinationAddressPrefixes": []
+                    }
+                  },
+                  {
+                    "name": "[variables('securityRules_Port_8082_Verto_name')]",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "8082",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 200,
+                      "direction": "Inbound",
+                      "sourcePortRanges": [],
+                      "destinationPortRanges": [],
+                      "sourceAddressPrefixes": [],
+                      "destinationAddressPrefixes": []
+                    }
+                  },
+                  {
+                    "name": "[variables('securityRules_Port_10000_30000_RTP_name')]",
+                    "properties": {
+                      "provisioningState": "Succeeded",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "10000-30000",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Inbound",
+                      "sourcePortRanges": [],
+                      "destinationPortRanges": [],
+                      "sourceAddressPrefixes": [],
+                      "destinationAddressPrefixes": []
+                    }
+                  }
+                ]
+              }
+            },
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
-            }
-          ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": true,
-            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
-          }
-        }
-      },
-      "resources": [
-        {
-          "type": "extensions",
-          "name": "[variables('extensionName')]",
-          "apiVersion": "2017-03-30",
-          "location": "[parameters('location')]",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
-          ],
-          "properties": {
-            "publisher": "Microsoft.Compute",
-            "type": "CustomScriptExtension",
-            "typeHandlerVersion": "1.8",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "fileUris": [
-                "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_3389_RDP_name'))]",
+              "apiVersion": "2018-08-01",
+              "scale": null,
+              "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "3389",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "[if(equals(parameters('enableRdp'), 'Yes'), 'Allow', 'Deny')]",
+                "priority": 300,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_8082_Verto_name'))]",
+              "apiVersion": "2018-08-01",
+              "scale": null,
+              "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "8082",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 200,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_10000_30000_RTP_name'))]",
+              "apiVersion": "2018-08-01",
+              "scale": null,
+              "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "10000-30000",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "name": "[variables('storageAccountName')]",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2018-07-01",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "Storage",
+              "properties": {}
+            },
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "name": "[variables('publicIPAddressName')]",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2018-10-01",
+              "properties": {
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                  "domainNameLabel": "[parameters('dnsLabelPrefix')]",
+                  "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnsZone'))]"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "name": "[variables('virtualNetworkName')]",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2018-10-01",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[variables('addressPrefix')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "[variables('subnetName')]",
+                    "properties": {
+                      "addressPrefix": "[variables('subnetPrefix')]",
+                      "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                      }
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+              ]
+            },
+            {
+              "apiVersion": "2015-06-15",
+              "type": "Microsoft.Compute/virtualMachines/extensions",
+              "name": "[variables('nvidiaextensionname')]",
+              "location": "[resourceGroup().location]",
+              "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('extensionName'))]"
               ],
-              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
+              "properties": {
+                "publisher": "Microsoft.HpcCompute",
+                "type": "NvidiaGpuDriverWindows",
+                "typeHandlerVersion": "1.2",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "name": "[variables('nicName')]",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2018-10-01",
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+              ],
+              "properties": {
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                },
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig1",
+                    "properties": {
+                      "privateIPAllocationMethod": "Dynamic",
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                      },
+                      "subnet": {
+                        "id": "[variables('subnetRef')]"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "name": "[variables('vmName')]",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2018-10-01",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+              ],
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "Standard_NC6"
+                },
+                "osProfile": {
+                  "computerName": "[variables('vmName')]",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                  "imageReference": {
+                    "publisher": "MicrosoftWindowsServer",
+                    "offer": "WindowsServer",
+                    "sku": "[parameters('windowsOSVersion')]",
+                    "version": "latest"
+                  },
+                  "osDisk": {
+                    "createOption": "FromImage"
+                  },
+                  "dataDisks": [
+                    {
+                      "diskSizeGB": 1023,
+                      "lun": 0,
+                      "createOption": "Empty"
+                    }
+                  ]
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                    }
+                  ]
+                },
+                "diagnosticsProfile": {
+                  "bootDiagnostics": {
+                    "enabled": true,
+                    "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
+                  }
+                }
+              },
+              "resources": [
+                {
+                  "type": "extensions",
+                  "name": "[variables('extensionName')]",
+                  "apiVersion": "2017-03-30",
+                  "location": "[parameters('location')]",
+                  "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+                  ],
+                  "properties": {
+                    "publisher": "Microsoft.Compute",
+                    "type": "CustomScriptExtension",
+                    "typeHandlerVersion": "1.8",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "fileUris": [
+                        "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+                      ],
+                      "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "outputs": {
+            "hostname": {
+              "type": "string",
+              "value": "[reference(variables('publicIPAddressName')).dnsSettings.fqdn]"
             }
           }
         }
-      ]
-    }
-  ],
-  "outputs": {
-    "hostname": {
-      "type": "string",
-      "value": "[reference(variables('publicIPAddressName')).dnsSettings.fqdn]"
-    }
-  }
-}
