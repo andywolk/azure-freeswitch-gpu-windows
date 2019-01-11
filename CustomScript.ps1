@@ -68,6 +68,14 @@ Else
     "1. Local Administrator software is already existing" 
 }
 
+<# Start downloading Ruby #>
+$rubyurl="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.0-1/rubyinstaller-devkit-2.6.0-1-x64.exe"
+Invoke-WebRequest -Uri $rubyurl -OutFile "$dest\ruby.exe"
+
+<# Install Ruby #>
+$spath="$dest\ruby.exe"
+$status=Start-Process -FilePath "$dest\ruby.exe" -ArgumentList '/verysilent' -Wait -PassThru -Verb "RunAs" 
+
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
 
