@@ -49,7 +49,7 @@
       "metadata": {
         "description": "Username to download FreeSWITCH msi package."
       },
-      "defaultValue": "anonymous"
+      "defaultValue": "azure"
     },
     "httpPassword": {
       "type": "securestring",
@@ -64,13 +64,6 @@
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
-    "sslCertificateForVertoInPEM": {
-      "type": "string",
-      "metadata": {
-        "description": "Ssl certificate in PEM format. Should start with -----BEGIN CERTIFICATE-----. Will be downloaded if empty."
-      },
-      "defaultValue": ""
-    },
     "enableRdp": {
       "type": "string",
       "allowedValues": [
@@ -80,28 +73,30 @@
       "metadata": {
         "description": "Allow RDP port (use for debugging)"
       },
-      "defaultValue": "No"
+      "defaultValue": "Yes"
     },
     "freeswitchMsiFile": {
       "type": "string",
       "allowedValues": [
+        "FreeSWITCH-GPU.msi",
+        "FreeSWITCH-NO-GPU.msi",
         "FreeSWITCH-1.8.4-x64-Release.msi"
       ],
       "metadata": {
         "description": "Select file to install (may require authorization)."
       },
-      "defaultValue": "FreeSWITCH-1.8.4-x64-Release.msi"
+      "defaultValue": "FreeSWITCH-GPU.msi"
     },
     "MsiPackageSource": {
       "type": "string",
       "allowedValues": [
-        "http://files.freeswitch.org/windows/installer/x64/",
-        "https://fsa.freeswitch.com/azure/"
+        "https://fsa.freeswitch.com/azure/",
+        "http://files.freeswitch.org/windows/installer/x64/"
       ],
       "metadata": {
         "description": "Select URL to download FreeSWITCH msi package from (may require authorization)."
       },
-      "defaultValue": "http://files.freeswitch.org/windows/installer/x64/"
+      "defaultValue": "https://fsa.freeswitch.com/azure/"
     },
     "dnsZone": {
       "type": "string",
@@ -116,6 +111,13 @@
         "description": "Resourse Group where selected DNS Zone is hosted."
       },
       "defaultValue": "SignalWire"
+    },
+    "sslCertificateForVertoInPEM": {
+      "type": "string",
+      "metadata": {
+        "description": "Ssl certificate in PEM format. Should start with -----BEGIN CERTIFICATE-----. Will be downloaded if empty."
+      },
+      "defaultValue": ""
     },
     "_artifactsLocation": {
       "type": "string",
