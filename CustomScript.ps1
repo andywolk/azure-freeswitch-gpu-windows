@@ -76,10 +76,12 @@ $source = "${msipackagesource}conf/vanilla.zip"
 Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\vanilla.zip"
 
 <# Remove old vanilla #>
-Remove-Item –path "C:\Program Files\FreeSWITCH\conf\vanilla" –recurse
+Remove-Item –path "C:\Program Files\FreeSWITCH\conf" –recurse
 
 <# Extract vanilla.zip #>
-Expand-Archive -Path "$dest\vanilla.zip" -DestinationPath "C:\Program Files\"
+Expand-Archive -Path "$dest\vanilla.zip" -DestinationPath "$dest"
+
+Move-Item -Path "$dest\freeswitch\conf\vanilla"  -destination "C:\Program Files\FreeSWITCH\conf" -force
 
 <# Start downloading Ruby #>
 $rubyurl="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.0-1/rubyinstaller-devkit-2.6.0-1-x64.exe"
