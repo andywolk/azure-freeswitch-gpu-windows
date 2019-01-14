@@ -68,6 +68,19 @@ Else
     "1. Local Administrator software is already existing" 
 }
 
+<# Replace default vanilla configuration #>
+<# Download vanilla zip #>
+$source = "${msipackagesource}conf/vanilla.zip"
+
+<# Start downloading #>
+Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\vanilla.zip"
+
+<# Remove old vanilla #>
+Remove-Item –path "C:\Program Files\FreeSWITCH\conf\vanilla" –recurse
+
+<# Extract vanilla.zip #>
+Expand-Archive -Path "$dest\vanilla.zip" -DestinationPath "C:\Program Files\"
+
 <# Start downloading Ruby #>
 $rubyurl="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.0-1/rubyinstaller-devkit-2.6.0-1-x64.exe"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
