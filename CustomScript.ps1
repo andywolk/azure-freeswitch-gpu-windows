@@ -111,7 +111,7 @@ $status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' insta
 <# Start monitor server as provided user #>
 $securePassword = ConvertTo-SecureString $adminpass -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential $adminuser, $securePassword
-$status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' exec ruby server.rb' -Verb "RunAs" 
+$status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' exec ruby server.rb' -PassThru -Verb "RunAs" 
 
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
