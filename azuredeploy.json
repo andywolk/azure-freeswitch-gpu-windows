@@ -64,6 +64,17 @@
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
+    "enableEsl": {
+      "type": "string",
+      "allowedValues": [
+        "Yes",
+        "No"
+      ],
+      "metadata": {
+        "description": "Allow ESL port (use for debugging)"
+      },
+      "defaultValue": "Yes"
+    },
     "enableRdp": {
       "type": "string",
       "allowedValues": [
@@ -165,10 +176,11 @@
     "virtualNetworkName": "FSGPU-VNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
     "networkSecurityGroupName": "FSGPU-nSG",
+    "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
+    "securityRules_Port_8021_ESL_name": "Port_8021_ESL",
     "securityRules_Port_8082_Verto_name": "Port_8082_Verto",
     "securityRules_Port_8088_Monitor_name": "Port_8088_Monitor",
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
-    "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
     "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', ' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -httpuser \"', parameters('httpUsername'), '\"', ' -httppass \"', parameters('httpPassword'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"')]"
@@ -242,6 +254,24 @@
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
+              "priority": 500,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          },
+          {
+            "name": "[variables('securityRules_Port_8021_ESL_name')]",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8021",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "[if(equals(parameters('enableEsl'), 'Yes'), 'Allow', 'Deny')]",
               "priority": 400,
               "direction": "Inbound",
               "sourcePortRanges": [],
@@ -309,6 +339,30 @@
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_8021_ESL_name'))]",
+      "apiVersion": "2018-08-01",
+      "scale": null,
+      "properties": {
+        "provisioningState": "Succeeded",
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "8021",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "[if(equals(parameters('enableEsl'), 'Yes'), 'Allow', 'Deny')]",
+        "priority": 400,
+        "direction": "Inbound",
+        "sourcePortRanges": [],
+        "destinationPortRanges": [],
+        "sourceAddressPrefixes": [],
+        "destinationAddressPrefixes": []
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
       "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_3389_RDP_name'))]",
       "apiVersion": "2018-08-01",
       "scale": null,
@@ -344,7 +398,7 @@
         "sourceAddressPrefix": "*",
         "destinationAddressPrefix": "*",
         "access": "Allow",
-        "priority": 400,
+        "priority": 500,
         "direction": "Inbound",
         "sourcePortRanges": [],
         "destinationPortRanges": [],
