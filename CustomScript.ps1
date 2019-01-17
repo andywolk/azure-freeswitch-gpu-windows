@@ -58,8 +58,7 @@ If($global:availability -eq $null)
             $status=Start-Process -FilePath msiexec.exe -ArgumentList '/i',$spath,'/q' -Wait -PassThru -Verb "RunAs" 
             If($?) 
         { 
-            checksoftware 
-                    "3.  $($Global:availability.DisplayName)--$($Global:availability.DisplayVersion) has been installed" 
+               "3.  $($Global:availability.DisplayName)--$($Global:availability.DisplayVersion) has been installed" 
         } 
         else{"3. Unable to install the software"} 
         }    
