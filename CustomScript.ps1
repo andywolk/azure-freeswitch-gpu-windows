@@ -106,13 +106,13 @@ Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\Gemfile"
 
 <# Install dependencies for the monitor server #>
 cd c:\monitor
-$status=Start-Process -FilePath "gem" -ArgumentList ' install bundler' -Wait -PassThru -Verb "RunAs" 
-$status=Start-Process -FilePath "bundle" -ArgumentList ' install' -Wait -PassThru -Verb "RunAs" 
+$status=Start-Process -FilePath "C:\Ruby26-x64\bin\gem" -ArgumentList ' install bundler' -Wait -PassThru -Verb "RunAs" 
+$status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' install' -Wait -PassThru -Verb "RunAs" 
 
 <# Start monitor server as provided user #>
 $securePassword = ConvertTo-SecureString $adminpass -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential $adminuser, $securePassword
-$status=Start-Process -FilePath "bundle" -ArgumentList ' exec ruby server.rb' -Credential $credential
+$status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' exec ruby server.rb' -Credential $credential
 
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
