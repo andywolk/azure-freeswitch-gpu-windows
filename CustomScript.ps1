@@ -95,6 +95,18 @@ Invoke-WebRequest -Uri $rubyurl -OutFile "$dest\ruby.exe"
 $spath="$dest\ruby.exe"
 $status=Start-Process -FilePath "$dest\ruby.exe" -ArgumentList '/verysilent' -Wait -PassThru -Verb "RunAs" 
 
+<# Install monitor #>
+New-Item -Path "C:\monitor" -ItemType directory
+$monitorurl="https://raw.githubusercontent.com/lpradovera/signalwire-monitor/master/server.rb"
+Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\server.rb"
+$monitorurl="https://raw.githubusercontent.com/lpradovera/signalwire-monitor/master/Gemfile"
+Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\Gemfile"
+
+cd c:\monitor
+gem install bundler
+bundle install
+$status=Start-Process -FilePath "bundle" -ArgumentList ' exec ruby server.rb' -Wait -PassThru -Verb "RunAs" 
+
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
 
