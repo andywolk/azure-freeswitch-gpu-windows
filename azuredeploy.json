@@ -177,7 +177,9 @@
     "virtualNetworkName": "FSGPU-VNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
     "networkSecurityGroupName": "FSGPU-nSG",
+    "securityRules_Port_80_LatencyTest_name": "Port_80_LatencyTest",
     "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
+    "securityRules_Port_5080_SIP_name": "Port_5080_SIP",
     "securityRules_Port_8021_ESL_name": "Port_8021_ESL",
     "securityRules_Port_8082_Verto_name": "Port_8082_Verto",
     "securityRules_Port_8088_Monitor_name": "Port_8088_Monitor",
@@ -245,6 +247,42 @@
       "location": "[parameters('location')]",
       "properties": {
         "securityRules": [
+          {
+            "name": "[variables('securityRules_Port_80_LatencyTest_name')]",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 700,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          },
+          {
+            "name": "[variables('securityRules_Port_5080_SIP_name')]",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5080",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 600,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          },
           {
             "name": "[variables('securityRules_Port_8088_Monitor_name')]",
             "properties": {
@@ -337,6 +375,54 @@
           }
         ]
       }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_80_LatencyTest_name'))]",
+      "apiVersion": "2018-08-01",
+      "scale": null,
+      "properties": {
+        "provisioningState": "Succeeded",
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "80",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 700,
+        "direction": "Inbound",
+        "sourcePortRanges": [],
+        "destinationPortRanges": [],
+        "sourceAddressPrefixes": [],
+        "destinationAddressPrefixes": []
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_5080_SIP_name'))]",
+      "apiVersion": "2018-08-01",
+      "scale": null,
+      "properties": {
+        "provisioningState": "Succeeded",
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "5080",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 600,
+        "direction": "Inbound",
+        "sourcePortRanges": [],
+        "destinationPortRanges": [],
+        "sourceAddressPrefixes": [],
+        "destinationAddressPrefixes": []
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+      ]
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",

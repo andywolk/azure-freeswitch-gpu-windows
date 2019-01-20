@@ -25,6 +25,10 @@ Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
 ###New-NetFirewallRule -DisplayName 'FreeSWITCH Server ports' -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('8021', '8082', '10000-30000')
 ###New-NetFirewallRule -DisplayName 'FreeSWITCH Monitoring port' -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('8088')
 
+<# Create a folder for pngs files (required for the latency test) #>
+$pngsdest = "C:\Program Files\FreeSWITCH\pngs"
+New-Item -Path $pngsdest -ItemType directory
+
 <# Create a folder for a PEM file #>
 $pemdest = "C:\Program Files\FreeSWITCH\cert"
 New-Item -Path $pemdest -ItemType directory
@@ -98,6 +102,9 @@ Remove-Item –path "C:\Program Files\FreeSWITCH\conf" –recurse
 Expand-Archive -Path "$dest\vanilla.zip" -DestinationPath "$dest"
 
 Move-Item -Path "$dest\freeswitch\conf\vanilla"  -destination "C:\Program Files\FreeSWITCH\conf" -force
+
+$latencyurl="${msipackagesource}qrcodes.mp4"
+Invoke-WebRequest -Uri $latencyurl -OutFile "C:\Program Files\FreeSWITCH\sounds\en\us\callie\qrcodes.mp4"
 
 <# Start downloading Ruby #>
 $rubyurl="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.0-1/rubyinstaller-devkit-2.6.0-1-x64.exe"
