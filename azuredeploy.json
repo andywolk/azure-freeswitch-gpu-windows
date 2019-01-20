@@ -91,6 +91,7 @@
       "allowedValues": [
         "FreeSWITCH-GPU.msi",
         "FreeSWITCH-NO-GPU.msi",
+        "FreeSWITCH-GPU-EncDec.msi",
         "FreeSWITCH-1.8.4-x64-Release.msi"
       ],
       "metadata": {
