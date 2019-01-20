@@ -20,8 +20,10 @@ param (
 ### Usage from comments - add to the system environment variable ###
 [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\NVIDIA Corporation\NVSMI\", [EnvironmentVariableTarget]::Machine)
 
-New-NetFirewallRule -DisplayName 'FreeSWITCH Server ports' -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('8021', '8082', '10000-30000')
-New-NetFirewallRule -DisplayName 'FreeSWITCH Monitoring port' -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('8088')
+<# Turn Windows Firewall off #> 
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+###New-NetFirewallRule -DisplayName 'FreeSWITCH Server ports' -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('8021', '8082', '10000-30000')
+###New-NetFirewallRule -DisplayName 'FreeSWITCH Monitoring port' -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('8088')
 
 <# Create a folder for a PEM file #>
 $pemdest = "C:\Program Files\FreeSWITCH\cert"
