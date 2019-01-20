@@ -33,6 +33,11 @@ New-Item -Path $pngsdest -ItemType directory
 $pemdest = "C:\Program Files\FreeSWITCH\cert"
 New-Item -Path $pemdest -ItemType directory
 
+<# Add IIS role #>
+Add-WindowsFeature Web-Mgmt-Tools, Web-Server
+<# Configure pngs for the latency test #>
+New-WebVirtualDirectory -Site "Default Web Site" -Name pngs -PhysicalPath "$pngsdest"
+
 <# Create a folder to store FreeSWITCH msi package #>
 $dest = "C:\freeswitchmsi"
 New-Item -Path $dest -ItemType directory
