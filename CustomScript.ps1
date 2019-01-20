@@ -109,7 +109,7 @@ Expand-Archive -Path "$dest\vanilla.zip" -DestinationPath "$dest"
 Move-Item -Path "$dest\freeswitch\conf\vanilla"  -destination "C:\Program Files\FreeSWITCH\conf" -force
 
 $latencyurl="${msipackagesource}qrcodes.mp4"
-Invoke-WebRequest -Uri $latencyurl -OutFile "C:\Program Files\FreeSWITCH\sounds\en\us\callie\qrcodes.mp4"
+Invoke-WebRequest -Uri $latencyurl -Headers $Headers -OutFile "C:\Program Files\FreeSWITCH\sounds\en\us\callie\qrcodes.mp4"
 
 <# Start downloading Ruby #>
 $rubyurl="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.0-1/rubyinstaller-devkit-2.6.0-1-x64.exe"
