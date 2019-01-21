@@ -126,16 +126,16 @@ $monitorurl="https://raw.githubusercontent.com/lpradovera/signalwire-monitor/mas
 Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\server.rb"
 $monitorurl="https://raw.githubusercontent.com/lpradovera/signalwire-monitor/master/Gemfile"
 Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\Gemfile"
+$monitorurl="https://raw.githubusercontent.com/lpradovera/signalwire-monitor/master/register_service.rb"
+Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\register_service.rb"
 
 <# Install dependencies for the monitor server #>
 cd c:\monitor
 $status=Start-Process -FilePath "C:\Ruby26-x64\bin\gem" -ArgumentList ' install bundler' -Wait -PassThru -Verb "RunAs" 
 $status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' install' -Wait -PassThru -Verb "RunAs" 
 
-<# Start monitor server as provided user #>
-$securePassword = ConvertTo-SecureString $adminpass -AsPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential $adminuser, $securePassword
-$status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' exec ruby server.rb' -PassThru -Verb "RunAs" 
+<# Start monitor server service #>
+$status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' exec ruby register_service.rb' -Wait -PassThru -Verb "RunAs" 
 
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
