@@ -135,7 +135,8 @@ $status=Start-Process -FilePath "C:\Ruby26-x64\bin\gem" -ArgumentList ' install 
 $status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' install' -Wait -PassThru -Verb "RunAs" 
 
 <# Start monitor server service #>
-$status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' exec ruby register_service.rb' -Wait -PassThru -Verb "RunAs" 
+###$status=Start-Process -FilePath "C:\Ruby26-x64\bin\ruby" -ArgumentList ' register_service.rb' -Wait -PassThru -Verb "RunAs" 
+###Start-Service -Name "signalwire_monitoring"
 
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
