@@ -65,26 +65,26 @@
       }
     },
     "enableEsl": {
-      "type": "string",
+      "type": "bool",
       "allowedValues": [
-        "Yes",
-        "No"
+        true,
+        false
       ],
       "metadata": {
         "description": "Allow ESL port (use for debugging)"
       },
-      "defaultValue": "Yes"
+      "defaultValue": true
     },
     "enableRdp": {
-      "type": "string",
+      "type": "bool",
       "allowedValues": [
-        "Yes",
-        "No"
+        true,
+        false
       ],
       "metadata": {
         "description": "Allow RDP port (use for debugging)"
       },
-      "defaultValue": "Yes"
+      "defaultValue": true
     },
     "freeswitchMsiFile": {
       "type": "string",
@@ -154,13 +154,6 @@
       "metadata": {
         "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
       }
-    },
-    "location": {
-      "type": "string",
-      "defaultValue": "eastus",
-      "metadata": {
-        "description": "Location for all resources."
-      }
     }
   },
   "variables": {
@@ -226,7 +219,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('networkSecurityGroupName')]",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
           {
@@ -292,7 +285,7 @@
               "destinationPortRange": "8021",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
-              "access": "[if(equals(parameters('enableEsl'), 'Yes'), 'Allow', 'Deny')]",
+              "access": "[if(parameters('enableEsl'), 'Allow', 'Deny')]",
               "priority": 400,
               "direction": "Inbound",
               "sourcePortRanges": [],
@@ -310,7 +303,7 @@
               "destinationPortRange": "3389",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
-              "access": "[if(equals(parameters('enableRdp'), 'Yes'), 'Allow', 'Deny')]",
+              "access": "[if(parameters('enableRdp'), 'Allow', 'Deny')]",
               "priority": 300,
               "direction": "Inbound",
               "sourcePortRanges": [],
@@ -418,7 +411,7 @@
         "destinationPortRange": "8021",
         "sourceAddressPrefix": "*",
         "destinationAddressPrefix": "*",
-        "access": "[if(equals(parameters('enableEsl'), 'Yes'), 'Allow', 'Deny')]",
+        "access": "[if(parameters('enableEsl'), 'Allow', 'Deny')]",
         "priority": 400,
         "direction": "Inbound",
         "sourcePortRanges": [],
@@ -442,7 +435,7 @@
         "destinationPortRange": "3389",
         "sourceAddressPrefix": "*",
         "destinationAddressPrefix": "*",
-        "access": "[if(equals(parameters('enableRdp'), 'Yes'), 'Allow', 'Deny')]",
+        "access": "[if(parameters('enableRdp'), 'Allow', 'Deny')]",
         "priority": 300,
         "direction": "Inbound",
         "sourcePortRanges": [],
@@ -661,7 +654,7 @@
           "type": "extensions",
           "name": "[variables('extensionName')]",
           "apiVersion": "2017-03-30",
-          "location": "[parameters('location')]",
+          "location": "[resourceGroup().location]",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
           ],
