@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
+  "contentVersion": "1.0.0.1",
   "parameters": {
     "VMSize": {
       "type": "string",
@@ -159,7 +159,7 @@
   "variables": {
     "rootresourcegroupname": "[resourceGroup().name]",
     "nvidiaextensionname": "NVIDIAGPUDrivers",
-    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'fsstorage')]",
+    "storageAccountName": "[substring(concat(uniquestring(resourceGroup().id), 'storage'), 0, min(length(concat(uniquestring(resourceGroup().id), 'storage')), 24))]",
     "nicName": "FSGPU-VMNic",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
@@ -368,174 +368,6 @@
           }
         ]
       }
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_80_LatencyTest_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "80",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 700,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_5080_SIP_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "5080",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 600,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_8021_ESL_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "8021",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "[if(parameters('enableEsl'), 'Allow', 'Deny')]",
-        "priority": 400,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_3389_RDP_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "3389",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "[if(parameters('enableRdp'), 'Allow', 'Deny')]",
-        "priority": 300,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_8088_Monitor_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "8088",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 500,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_8082_Verto_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "8082",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 200,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroupName'), '/', variables('securityRules_Port_10000_30000_RTP_name'))]",
-      "apiVersion": "2018-08-01",
-      "scale": null,
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "10000-30000",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 100,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-      ]
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
