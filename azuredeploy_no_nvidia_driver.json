@@ -5,31 +5,9 @@
     "VMSize": {
       "type": "string",
       "allowedValues": [
-        "Standard_NC6",
-        "Standard_NC12",
-        "Standard_NC24",
-        "Standard_NC24r",
-        "Standard_NC6s_v2",
-        "Standard_NC12s_v2",
-        "Standard_NC24s_v2",
-        "Standard_NC24rs_v2",
-        "Standard_NC6s_v3",
-        "Standard_NC12s_v3",
-        "Standard_NC24s_v3",
-        "Standard_NC24rs_v3",
-        "Standard_ND6s",
-        "Standard_ND12s",
-        "Standard_ND24s",
-        "Standard_ND24rs",
-        "Standard_NV6",
-        "Standard_NV12",
-        "Standard_NV24",
-        "Standard_NV6s_v2",
-        "Standard_NV12s_v2",
-        "Standard_NV24s_v2",
-        "Standard_ND40s_v2"
+        "Standard_B1s"
       ],
-      "defaultValue": "Standard_NC6"
+      "defaultValue": "Standard_B1s"
     },
     "adminUsername": {
       "type": "string",
@@ -89,15 +67,12 @@
     "freeswitchMsiFile": {
       "type": "string",
       "allowedValues": [
-        "FreeSWITCH-GPU.msi",
-        "FreeSWITCH-NO-GPU.msi",
-        "FreeSWITCH-GPU-EncDec.msi",
-        "FreeSWITCH-1.8.4-x64-Release.msi"
+        "FreeSWITCH-1.9.0.3708-snapshot-a5cecbfc2a-20190520152438-x64-Release.msi"
       ],
       "metadata": {
         "description": "Select file to install (may require authorization)."
       },
-      "defaultValue": "FreeSWITCH-GPU.msi"
+      "defaultValue": "FreeSWITCH-1.9.0.3708-snapshot-a5cecbfc2a-20190520152438-x64-Release.msi"
     },
     "MsiPackageSource": {
       "type": "string",
