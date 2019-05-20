@@ -97,7 +97,7 @@
       "metadata": {
         "description": "Resourse Group where selected DNS Zone is hosted."
       },
-      "defaultValue": "SignalWire"
+      "defaultValue": "signalwire"
     },
     "sslCertificateForVertoInPEM": {
       "type": "string",
