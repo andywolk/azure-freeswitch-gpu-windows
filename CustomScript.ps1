@@ -1,6 +1,5 @@
 <# Custom Script for Windows to configure FreeSWITCH using data from Azure ARM template parameters #>
 param (
-    [string]$pemdata,
     [string]$hostname,
     [string]$httpuser,
     [string]$httppass,
