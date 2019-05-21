@@ -40,6 +40,8 @@ New-Item -Path $dest -ItemType directory
 $env:COMPUTERNAME | Out-File -encoding ASCII "$dest\computername.txt"
 [System.Net.Dns]::GetHostName() | Out-File -encoding ASCII "$dest\hostname.txt"
 
+exit 0
+
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
 
