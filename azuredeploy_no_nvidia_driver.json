@@ -226,7 +226,7 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2018-10-01",
       "properties": {
-        "publicIPAllocationMethod": "Static",
+        "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
           "domainNameLabel": "[parameters('dnsLabelPrefix')]"
         }
