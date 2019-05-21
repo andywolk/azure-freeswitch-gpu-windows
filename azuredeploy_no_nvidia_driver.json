@@ -63,13 +63,6 @@
       },
       "defaultValue": "https://fsa.freeswitch.com/azure/"
     },
-    "sslCertificateForVertoInPEM": {
-      "type": "string",
-      "metadata": {
-        "description": "Ssl certificate in PEM format. Should start with -----BEGIN CERTIFICATE-----. Will be downloaded if empty."
-      },
-      "defaultValue": ""
-    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -116,7 +109,7 @@
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', ' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -httpuser \"', parameters('httpUsername'), '\"', ' -httppass \"', parameters('httpPassword'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
+    "scriptParameters": "[concat(' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -httpuser \"', parameters('httpUsername'), '\"', ' -httppass \"', parameters('httpPassword'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
   },
   "resources": [
     {
