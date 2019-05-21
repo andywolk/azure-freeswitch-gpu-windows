@@ -101,7 +101,7 @@ $source = "${msipackagesource}conf/vanilla.zip"
 Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\vanilla.zip"
 
 <# Remove old vanilla #>
-Remove-Item –path "C:\Program Files\FreeSWITCH\conf" –recurse
+Remove-Item â€“path "C:\Program Files\FreeSWITCH\conf" â€“recurse
 
 <# Extract vanilla.zip #>
 Expand-Archive -Path "$dest\vanilla.zip" -DestinationPath "$dest"
@@ -110,33 +110,6 @@ Move-Item -Path "$dest\freeswitch\conf\vanilla"  -destination "C:\Program Files\
 
 $latencyurl="${msipackagesource}qrcodes.mp4"
 Invoke-WebRequest -Uri $latencyurl -Headers $Headers -OutFile "C:\Program Files\FreeSWITCH\sounds\en\us\callie\qrcodes.mp4"
-
-<# Start downloading Ruby #>
-$rubyurl="https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.6.0-1/rubyinstaller-devkit-2.6.0-1-x64.exe"
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Invoke-WebRequest -Uri $rubyurl -OutFile "$dest\ruby.exe"
-
-<# Install Ruby #>
-$spath="$dest\ruby.exe"
-$status=Start-Process -FilePath "$dest\ruby.exe" -ArgumentList '/verysilent' -Wait -PassThru -Verb "RunAs" 
-
-<# Install monitor #>
-New-Item -Path "C:\monitor" -ItemType directory
-$monitorurl="https://raw.githubusercontent.com/lpradovera/signalwire-monitor/master/server.rb"
-Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\server.rb"
-$monitorurl="https://raw.githubusercontent.com/lpradovera/signalwire-monitor/master/Gemfile"
-Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\Gemfile"
-$monitorurl="https://raw.githubusercontent.com/lpradovera/signalwire-monitor/master/register_service.rb"
-Invoke-WebRequest -Uri $monitorurl -OutFile "C:\monitor\register_service.rb"
-
-<# Install dependencies for the monitor server #>
-cd c:\monitor
-$status=Start-Process -FilePath "C:\Ruby26-x64\bin\gem" -ArgumentList ' install bundler' -Wait -PassThru -Verb "RunAs" 
-$status=Start-Process -FilePath "C:\Ruby26-x64\bin\bundle" -ArgumentList ' install' -Wait -PassThru -Verb "RunAs" 
-
-<# Start monitor server service #>
-###$status=Start-Process -FilePath "C:\Ruby26-x64\bin\ruby" -ArgumentList ' register_service.rb' -Wait -PassThru -Verb "RunAs" 
-###Start-Service -Name "signalwire_monitoring"
 
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
