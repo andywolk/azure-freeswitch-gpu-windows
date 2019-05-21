@@ -33,6 +33,8 @@ New-Item -Path $pemdest -ItemType directory
 Add-WindowsFeature Web-Mgmt-Tools, Web-Server
 <# Configure pngs for the latency test #>
 New-WebVirtualDirectory -Site "Default Web Site" -Name pngs -PhysicalPath "$pngsdest"
+#Sets the Handler Mapping feature delegation to Read/Write for ACMESharp
+Set-WebConfiguration //System.webServer/handlers -metadata overrideMode -value Allow -PSPath IIS:/ -verbose
 
 <# Create a folder to store FreeSWITCH msi package #>
 $dest = "C:\freeswitchmsi"
@@ -40,6 +42,25 @@ New-Item -Path $dest -ItemType directory
 
 $hostname | Out-File -encoding ASCII "$dest\hostname.txt"
 $fqdn | Out-File -encoding ASCII "$dest\fqdn.txt"
+
+<# Install ACMESharp #>
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+Install-Module -Name ACMESharp -AllowClobber -Force
+Install-Module -Name ACMESharp.Providers.IIS -Force
+Import-Module ACMESharp
+Enable-ACMEExtensionModule -ModuleName ACMESharp.Providers.IIS
+Initialize-ACMEVault
+<# Get cert #>
+New-ACMERegistration -Contacts mailto:azure@signalwire.com -AcceptTos
+New-ACMEIdentifier -Dns $fqdn -Alias fs-verto
+Complete-ACMEChallenge -IdentifierRef fs-verto -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'Default Web Site' }
+Submit-ACMEChallenge -IdentifierRef fs-verto -ChallengeType http-01
+sleep -s 60
+Update-ACMEIdentifier -IdentifierRef fs-verto
+New-ACMECertificate -Generate -IdentifierRef fs-verto -Alias fs-verto-domain
+Submit-ACMECertificate -CertificateRef fs-verto-domain
+Update-ACMECertificate -CertificateRef fs-verto-domain
+Get-ACMECertificate fs-verto-domain -ExportKeyPEM "$dest\key.pem" -ExportCertificatePEM "$dest\cert.pem" -ExportIssuerPEM "$dest\issuer.pem"
 
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
