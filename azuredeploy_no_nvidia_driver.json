@@ -80,12 +80,11 @@
     "virtualNetworkName": "FSGPU-VNET",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
     "networkSecurityGroupName": "FSGPU-nSG",
-    "securityRules_Port_80_LatencyTest_name": "Port_80_LatencyTest",
+    "securityRules_Port_80_name": "Port_80",
     "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
     "securityRules_Port_5080_SIP_name": "Port_5080_SIP",
     "securityRules_Port_8082_Verto_name": "Port_8082_Verto",
-    "securityRules_Port_8088_Monitor_name": "Port_8088_Monitor",
-    "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
+    "securityRules_Port_16384_32768_RTP_name": "Ports_16384-32768_RTP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
     "scriptParameters": "[concat(' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
@@ -99,7 +98,7 @@
       "properties": {
         "securityRules": [
           {
-            "name": "[variables('securityRules_Port_80_LatencyTest_name')]",
+            "name": "[variables('securityRules_Port_80_name')]",
             "properties": {
               "provisioningState": "Succeeded",
               "protocol": "*",
@@ -127,24 +126,6 @@
               "destinationAddressPrefix": "*",
               "access": "Allow",
               "priority": 600,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
-            "name": "[variables('securityRules_Port_8088_Monitor_name')]",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "8088",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 500,
               "direction": "Inbound",
               "sourcePortRanges": [],
               "destinationPortRanges": [],
@@ -189,12 +170,12 @@
             }
           },
           {
-            "name": "[variables('securityRules_Port_10000_30000_RTP_name')]",
+            "name": "[variables('securityRules_Port_16384_32768_RTP_name')]",
             "properties": {
               "provisioningState": "Succeeded",
               "protocol": "*",
               "sourcePortRange": "*",
-              "destinationPortRange": "10000-30000",
+              "destinationPortRange": "16384-32768",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
