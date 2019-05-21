@@ -53,14 +53,6 @@ $Headers = @{
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
 
-<# Install a PEM file from Azure ARM template parameter or attempt downloading if none provided #>
-IF([string]::IsNullOrWhiteSpace($pemdata)) {            
-	$source = "${msipackagesource}verto.pem"    	
-	Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "${pemdest}\wss.pem"
-} else {            
-    $pemdata | Out-File -encoding ASCII "${pemdest}\wss.pem"
-}   
-
 <# Download FreeSWITCH msi package #>
 $source = "${msipackagesource}${freeswitchmsifile}"
 
