@@ -1,8 +1,6 @@
 <# Custom Script for Windows to configure FreeSWITCH using data from Azure ARM template parameters #>
 param (
     [string]$hostname,
-    [string]$httpuser,
-    [string]$httppass,
     [string]$msipackagesource,
     [string]$freeswitchmsifile,
     [string]$adminuser,
@@ -21,8 +19,6 @@ param (
 
 <# Turn Windows Firewall off #> 
 Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
-###New-NetFirewallRule -DisplayName 'FreeSWITCH Server ports' -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('8021', '8082', '10000-30000')
-###New-NetFirewallRule -DisplayName 'FreeSWITCH Monitoring port' -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('8088')
 
 <# Create a folder for pngs files (required for the latency test) #>
 $pngsdest = "C:\Program Files\FreeSWITCH\pngs"
@@ -41,14 +37,6 @@ New-WebVirtualDirectory -Site "Default Web Site" -Name pngs -PhysicalPath "$pngs
 $dest = "C:\freeswitchmsi"
 New-Item -Path $dest -ItemType directory
 
-<# HTTP AUTH #>
-$pair = "${httpuser}:${httppass}"
-$encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($pair))
-$basicAuthValue = "Basic $encodedCreds"
-$Headers = @{
-    Authorization = $basicAuthValue
-}
-
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
 
@@ -56,7 +44,7 @@ $ProgressPreference = 'SilentlyContinue'
 $source = "${msipackagesource}${freeswitchmsifile}"
 
 <# Start downloading #>
-Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\$freeswitchmsifile"
+Invoke-WebRequest -Uri $source -OutFile "$dest\$freeswitchmsifile"
 
 $spath="$dest\$freeswitchmsifile"
 
@@ -83,9 +71,6 @@ Else
 { 
     "1. Local Administrator software is already existing" 
 }
-
-$latencyurl="${msipackagesource}qrcodes.mp4"
-Invoke-WebRequest -Uri $latencyurl -Headers $Headers -OutFile "C:\Program Files\FreeSWITCH\sounds\en\us\callie\qrcodes.mp4"
 
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
