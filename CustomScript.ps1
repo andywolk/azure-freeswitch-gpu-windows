@@ -7,8 +7,6 @@ param (
     [string]$adminpass
 )
 
-(Get-AzureRmPublicIpAddress -Name 'publicIPAddressName' -ResourceGroupName test).DnsSettings.Fqdn | Out-File -encoding ASCII "$dest\hostname.txt"
-
 <# Add nvidia-smi to the path #>
 ### Modify a system environment variable ###
 [Environment]::SetEnvironmentVariable
@@ -38,6 +36,9 @@ New-WebVirtualDirectory -Site "Default Web Site" -Name pngs -PhysicalPath "$pngs
 <# Create a folder to store FreeSWITCH msi package #>
 $dest = "C:\freeswitchmsi"
 New-Item -Path $dest -ItemType directory
+
+$env:COMPUTERNAME | Out-File -encoding ASCII "$dest\computername.txt"
+[System.Net.Dns]::GetHostName() | Out-File -encoding ASCII "$dest\hostname.txt"
 
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
