@@ -56,9 +56,9 @@ $ProgressPreference = 'SilentlyContinue'
 <# Install a PEM file from Azure ARM template parameter or attempt downloading if none provided #>
 IF([string]::IsNullOrWhiteSpace($pemdata)) {            
 	$source = "${msipackagesource}verto.pem"    	
-	Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "${pemdest}\verto.pem"
+	Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "${pemdest}\wss.pem"
 } else {            
-    $pemdata | Out-File -encoding ASCII "$dest\verto.pem"
+    $pemdata | Out-File -encoding ASCII "${pemdest}\wss.pem"
 }   
 
 <# Download FreeSWITCH msi package #>
@@ -92,21 +92,6 @@ Else
 { 
     "1. Local Administrator software is already existing" 
 }
-
-<# Replace default vanilla configuration #>
-<# Download vanilla zip #>
-$source = "${msipackagesource}conf/vanilla.zip"
-
-<# Start downloading #>
-Invoke-WebRequest -Uri $source -Headers $Headers -OutFile "$dest\vanilla.zip"
-
-<# Remove old vanilla #>
-Remove-Item –path "C:\Program Files\FreeSWITCH\conf" –recurse
-
-<# Extract vanilla.zip #>
-Expand-Archive -Path "$dest\vanilla.zip" -DestinationPath "$dest"
-
-Move-Item -Path "$dest\freeswitch\conf\vanilla"  -destination "C:\Program Files\FreeSWITCH\conf" -force
 
 $latencyurl="${msipackagesource}qrcodes.mp4"
 Invoke-WebRequest -Uri $latencyurl -Headers $Headers -OutFile "C:\Program Files\FreeSWITCH\sounds\en\us\callie\qrcodes.mp4"
