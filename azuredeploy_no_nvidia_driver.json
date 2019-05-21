@@ -228,8 +228,7 @@
       "properties": {
         "publicIPAllocationMethod": "Static",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('dnsLabelPrefix')]",
-          "fqdn": "[concat(parameters('dnsLabelPrefix'), '.', parameters('dnsZone'))]"
+          "domainNameLabel": "[parameters('dnsLabelPrefix')]"
         }
       }
     },
