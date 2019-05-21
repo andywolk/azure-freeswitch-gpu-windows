@@ -87,7 +87,7 @@
     "securityRules_Port_16384_32768_RTP_name": "Ports_16384-32768_RTP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat(' -fqdn \"', resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName')).dnsSettings.fqdn, '\"', ' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
+    "scriptParameters": "[concat(' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
   },
   "resources": [
     {
@@ -337,7 +337,7 @@
               "fileUris": [
                 "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
-              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'), ' -fqdn \"', [reference(variables('publicIPAddressName')).dnsSettings.fqdn], '\"')]"
             }
           }
         }
