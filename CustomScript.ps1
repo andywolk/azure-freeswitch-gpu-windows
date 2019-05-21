@@ -1,5 +1,6 @@
 <# Custom Script for Windows to configure FreeSWITCH using data from Azure ARM template parameters #>
 param (
+    [string]$email,
     [string]$hostname,
     [string]$msipackagesource,
     [string]$freeswitchmsifile,
@@ -51,7 +52,7 @@ Import-Module ACMESharp
 Enable-ACMEExtensionModule -ModuleName ACMESharp.Providers.IIS
 Initialize-ACMEVault
 <# Get cert #>
-New-ACMERegistration -Contacts mailto:azure@signalwire.com -AcceptTos
+New-ACMERegistration -Contacts mailto:$email -AcceptTos
 New-ACMEIdentifier -Dns $fqdn -Alias fs-verto
 Complete-ACMEChallenge -IdentifierRef fs-verto -ChallengeType http-01 -Handler iis -HandlerParameters @{ WebSiteRef = 'Default Web Site' }
 Submit-ACMEChallenge -IdentifierRef fs-verto -ChallengeType http-01
