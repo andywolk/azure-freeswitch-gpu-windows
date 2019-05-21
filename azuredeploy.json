@@ -9,6 +9,13 @@
       ],
       "defaultValue": "Standard_B2s"
     },
+    "email": {
+      "type": "string",
+      "metadata": {
+        "description": "E-mail for Let's Encrypt."
+      },
+      "defaultValue": "azuretemplate@signalwire.com"
+    },    
     "adminUsername": {
       "type": "string",
       "metadata": {
@@ -87,7 +94,7 @@
     "securityRules_Port_16384_32768_RTP_name": "Ports_16384-32768_RTP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat(' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
+    "scriptParameters": "[concat(' -email \"', parameters('email'), '\"', ' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
   },
   "resources": [
     {
