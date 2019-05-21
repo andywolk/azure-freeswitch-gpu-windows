@@ -1,9 +1,9 @@
 {
   "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
   "type": "QuickStart",
-  "itemDisplayName": "Deploy FreeSWITCH server with nVidia GPU Hardware Acceleration.",
-  "description": "This template allows you to deploy a single FreeSWITCH server. This will deploy on a single Windows Server 2016 VM (Standard_NC6).",
-  "summary": "This template allows you to deploy a single FreeSWITCH server with nVidia GPU Hardware Acceleration.",
+  "itemDisplayName": "Deploy FreeSWITCH server with Verto enabled.",
+  "description": "This template allows you to deploy a single FreeSWITCH server. This will deploy on a single Windows Server 2016 VM.",
+  "summary": "This template allows you to deploy a single FreeSWITCH server with Verto enabled.",
   "githubUsername": "andywolk",
   "dateUpdated": "2019-01-24" 
 }
