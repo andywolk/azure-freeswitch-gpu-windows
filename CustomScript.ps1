@@ -4,7 +4,8 @@ param (
     [string]$msipackagesource,
     [string]$freeswitchmsifile,
     [string]$adminuser,
-    [string]$adminpass
+    [string]$adminpass,
+    [string]$fqdn
 )
 
 <# Add nvidia-smi to the path #>
@@ -37,10 +38,7 @@ New-WebVirtualDirectory -Site "Default Web Site" -Name pngs -PhysicalPath "$pngs
 $dest = "C:\freeswitchmsi"
 New-Item -Path $dest -ItemType directory
 
-$env:COMPUTERNAME | Out-File -encoding ASCII "$dest\computername.txt"
-[System.Net.Dns]::GetHostName() | Out-File -encoding ASCII "$dest\hostname.txt"
-
-exit 0
+$fqdn | Out-File -encoding ASCII "$dest\fqdn.txt"
 
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
