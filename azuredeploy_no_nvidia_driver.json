@@ -42,28 +42,6 @@
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
-    "enableEsl": {
-      "type": "bool",
-      "allowedValues": [
-        true,
-        false
-      ],
-      "metadata": {
-        "description": "Allow ESL port (use for debugging)"
-      },
-      "defaultValue": true
-    },
-    "enableRdp": {
-      "type": "bool",
-      "allowedValues": [
-        true,
-        false
-      ],
-      "metadata": {
-        "description": "Allow RDP port (use for debugging)"
-      },
-      "defaultValue": true
-    },
     "freeswitchMsiFile": {
       "type": "string",
       "allowedValues": [
@@ -147,7 +125,6 @@
     "securityRules_Port_80_LatencyTest_name": "Port_80_LatencyTest",
     "securityRules_Port_3389_RDP_name": "Port_3389_RDP",
     "securityRules_Port_5080_SIP_name": "Port_5080_SIP",
-    "securityRules_Port_8021_ESL_name": "Port_8021_ESL",
     "securityRules_Port_8082_Verto_name": "Port_8082_Verto",
     "securityRules_Port_8088_Monitor_name": "Port_8088_Monitor",
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
@@ -252,24 +229,6 @@
             }
           },
           {
-            "name": "[variables('securityRules_Port_8021_ESL_name')]",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "8021",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "[if(parameters('enableEsl'), 'Allow', 'Deny')]",
-              "priority": 400,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
             "name": "[variables('securityRules_Port_3389_RDP_name')]",
             "properties": {
               "provisioningState": "Succeeded",
@@ -278,7 +237,7 @@
               "destinationPortRange": "3389",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
-              "access": "[if(parameters('enableRdp'), 'Allow', 'Deny')]",
+              "access": "Allow",
               "priority": 300,
               "direction": "Inbound",
               "sourcePortRanges": [],
