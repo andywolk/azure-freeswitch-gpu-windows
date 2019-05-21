@@ -1,5 +1,6 @@
 <# Custom Script for Windows to configure FreeSWITCH using data from Azure ARM template parameters #>
 param (
+    [string]$fqdn,
     [string]$hostname,
     [string]$msipackagesource,
     [string]$freeswitchmsifile,
@@ -36,6 +37,8 @@ New-WebVirtualDirectory -Site "Default Web Site" -Name pngs -PhysicalPath "$pngs
 <# Create a folder to store FreeSWITCH msi package #>
 $dest = "C:\freeswitchmsi"
 New-Item -Path $dest -ItemType directory
+
+$fqdn | Out-File -encoding ASCII "$dest\fqdn.txt"
 
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
