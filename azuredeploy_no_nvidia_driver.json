@@ -22,20 +22,6 @@
         "description": "Password for the Virtual Machine."
       }
     },
-    "httpUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "Username to download FreeSWITCH msi package."
-      },
-      "defaultValue": "azure"
-    },
-    "httpPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Password to download FreeSWITCH msi package."
-      },
-      "defaultValue": ""
-    },
     "dnsLabelPrefix": {
       "type": "string",
       "metadata": {
@@ -44,24 +30,17 @@
     },
     "freeswitchMsiFile": {
       "type": "string",
-      "allowedValues": [
-        "FreeSWITCH-1.9.0.3708-snapshot-a5cecbfc2a-20190520152438-x64-Release.msi"
-      ],
       "metadata": {
         "description": "Select file to install (may require authorization)."
       },
-      "defaultValue": "FreeSWITCH-1.9.0.3708-snapshot-a5cecbfc2a-20190520152438-x64-Release.msi"
+      "defaultValue": "FreeSWITCH-1.9.0.3708-snapshot-a5cecbfc2a-20190521125830-x64-Release.msi"
     },
     "MsiPackageSource": {
       "type": "string",
-      "allowedValues": [
-        "https://fsa.freeswitch.com/azure/",
-        "http://files.freeswitch.org/windows/installer/x64/"
-      ],
       "metadata": {
         "description": "Select URL to download FreeSWITCH msi package from (may require authorization)."
       },
-      "defaultValue": "https://fsa.freeswitch.com/azure/"
+      "defaultValue": "https://files.freeswitch.org/windows/installer/x64/canary/"
     },
     "_artifactsLocation": {
       "type": "string",
@@ -109,7 +88,7 @@
     "securityRules_Port_10000_30000_RTP_name": "Ports_10000-30000_RTP",
     "scriptFileName": "CustomScript.ps1",
     "scriptFolder": ".",
-    "scriptParameters": "[concat(' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -httpuser \"', parameters('httpUsername'), '\"', ' -httppass \"', parameters('httpPassword'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
+    "scriptParameters": "[concat(' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
   },
   "resources": [
     {
