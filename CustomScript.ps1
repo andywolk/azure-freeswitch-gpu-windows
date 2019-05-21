@@ -38,6 +38,7 @@ New-WebVirtualDirectory -Site "Default Web Site" -Name pngs -PhysicalPath "$pngs
 $dest = "C:\freeswitchmsi"
 New-Item -Path $dest -ItemType directory
 
+$hostname | Out-File -encoding ASCII "$dest\hostname.txt"
 $fqdn | Out-File -encoding ASCII "$dest\fqdn.txt"
 
 <# Speed up downloading #>
