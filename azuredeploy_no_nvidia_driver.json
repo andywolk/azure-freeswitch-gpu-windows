@@ -5,9 +5,9 @@
     "VMSize": {
       "type": "string",
       "allowedValues": [
-        "Standard_B1s"
+        "Standard_B2s"
       ],
-      "defaultValue": "Standard_B1s"
+      "defaultValue": "Standard_B2s"
     },
     "adminUsername": {
       "type": "string",
