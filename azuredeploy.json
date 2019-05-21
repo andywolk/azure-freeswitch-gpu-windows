@@ -283,7 +283,7 @@
           "vmSize": "[parameters('VMSize')]"
         },
         "osProfile": {
-          "computerName": "[variables('vmName')]",
+          "computerName": "[reference(variables('publicIPAddressName')).dnsSettings.fqdn]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
