@@ -63,20 +63,6 @@
       },
       "defaultValue": "https://fsa.freeswitch.com/azure/"
     },
-    "dnsZone": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of DNS Zone to put VM host into."
-      },
-      "defaultValue": "azure.signalwire.com"
-    },
-    "dnszoneresoursegroup": {
-      "type": "string",
-      "metadata": {
-        "description": "Resourse Group where selected DNS Zone is hosted."
-      },
-      "defaultValue": "signalwire"
-    },
     "sslCertificateForVertoInPEM": {
       "type": "string",
       "metadata": {
@@ -133,40 +119,6 @@
     "scriptParameters": "[concat('-pemdata \"', parameters('sslCertificateForVertoInPEM'), '\"', ' -hostname \"', parameters('dnsLabelPrefix'), '\"', ' -httpuser \"', parameters('httpUsername'), '\"', ' -httppass \"', parameters('httpPassword'), '\"', ' -msipackagesource \"', parameters('MsiPackageSource'), '\"', ' -freeswitchmsifile \"', parameters('freeswitchMsiFile'), '\"', ' -adminuser \"', parameters('adminUsername'), '\"', ' -adminpass \"', parameters('adminPassword'), '\"')]"
   },
   "resources": [
-    {
-      "apiVersion": "2017-05-10",
-      "name": "nestedTemplate",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('dnszoneresoursegroup')]",
-      "properties": {
-        "mode": "Incremental",
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {},
-          "variables": {},
-          "resources": [
-            {
-              "type": "microsoft.network/dnszones/a",
-              "name": "[concat(parameters('dnsZone'), '/', parameters('dnsLabelPrefix'))]",
-              "apiVersion": "2015-05-04-preview",
-              "location": "global",
-              "properties": {
-                "TTL": 5,
-                "ARecords": [
-                  {
-                    "ipv4Address": "[reference(resourceId(variables('rootresourcegroupname'), 'Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).ipAddress]"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
-      ]
-    },
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
