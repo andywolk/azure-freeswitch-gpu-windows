@@ -15,8 +15,7 @@
       "type": "string",
       "metadata": {
         "description": "E-mail for Let's Encrypt."
-      },
-      "defaultValue": "azuretemplate@signalwire.com"
+      }
     },    
     "adminUsername": {
       "type": "string",
