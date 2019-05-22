@@ -63,6 +63,16 @@ Submit-ACMECertificate -CertificateRef fs-verto-domain
 Update-ACMECertificate -CertificateRef fs-verto-domain
 Get-ACMECertificate fs-verto-domain -ExportKeyPEM "$dest\key.pem" -ExportCertificatePEM "$dest\cert.pem" -ExportIssuerPEM "$dest\issuer.pem"
 
+<# Combine pem files to a bundle #>
+$pem = Get-Content -Path $dest\key.pem
+$pem | Out-File -encoding ASCII $dest\wss.pem
+
+$pem = Get-Content -Path $dest\cert.pem
+Add-Content -Path $dest\wss.pem -Value $pem
+
+$pem = Get-Content -Path $dest\issuer.pem
+Add-Content -Path $dest\wss.pem -Value $pem
+
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
 
@@ -97,6 +107,8 @@ Else
 { 
     "1. Local Administrator software is already existing" 
 }
+
+Copy-Item "$dest\wss.pem" -Destination "$pemdest" -Force
 
 <# Enable FreeSWITCH service to start with the system #>
 Set-Service -Name "FreeSWITCH" -StartupType Automatic
