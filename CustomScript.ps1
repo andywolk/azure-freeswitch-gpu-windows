@@ -1,5 +1,6 @@
 <# Custom Script for Windows to configure FreeSWITCH using data from Azure ARM template parameters #>
 param (
+    [string]$freeswitchpassword,
     [string]$email,
     [string]$hostname,
     [string]$msipackagesource,
@@ -8,16 +9,6 @@ param (
     [string]$adminpass,
     [string]$fqdn
 )
-
-<# Add nvidia-smi to the path #>
-### Modify a system environment variable ###
-[Environment]::SetEnvironmentVariable
-     ("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
-### Modify a user environment variable ###
-[Environment]::SetEnvironmentVariable
-     ("INCLUDE", $env:INCLUDE, [System.EnvironmentVariableTarget]::User)
-### Usage from comments - add to the system environment variable ###
-[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\NVIDIA Corporation\NVSMI\", [EnvironmentVariableTarget]::Machine)
 
 <# Turn Windows Firewall off #> 
 Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
@@ -61,25 +52,28 @@ Update-ACMEIdentifier -IdentifierRef fs-verto
 New-ACMECertificate -Generate -IdentifierRef fs-verto -Alias fs-verto-domain
 Submit-ACMECertificate -CertificateRef fs-verto-domain
 Update-ACMECertificate -CertificateRef fs-verto-domain
+<# Export pem files (optional, unfortunately the key file is exported in Pkcs1 format here, we can't take it) #>
 Get-ACMECertificate fs-verto-domain -ExportKeyPEM "$dest\key_Pkcs1.pem" -ExportCertificatePEM "$dest\cert.pem" -ExportIssuerPEM "$dest\issuer.pem"
 
+<# Export certificate as pfx so we could convert it to Pkcs8 key and a cert later #>
 $p="supersecurepassword"
 Get-ACMECertificate fs-verto-domain -ExportPkcs12 "$dest\cert.pfx" -CertificatePassword $p
 
+<# Convert pfx file to a Pkcs8 key and a cert #>
 Install-Module -Name PSPKI -Force
 Import-Module PSPKI
 $sp=ConvertTo-SecureString $p -asplaintext -force
 Convert-PfxToPem -InputFile "$dest\cert.pfx" -Password $sp -OutputFile "$dest\keycert.pem" -OutputType Pkcs8
 
-<# Combine pem files to a bundle #>
+<# Combine key,certificate and issuer certificate into the wss.pem bundle #>
+<# FYI: keycert.pem contains a key (Pkcs8 format we wanted) and a cert. #>
 $pem = Get-Content -Path $dest\keycert.pem
 $pem | Out-File -encoding ASCII $dest\wss.pem
 
-#$pem = Get-Content -Path $dest\cert.pem
-#Add-Content -Path $dest\wss.pem -Value $pem
-
 $pem = Get-Content -Path $dest\issuer.pem
 Add-Content -Path $dest\wss.pem -Value $pem
+
+<# Time to download and install FreeSWITCH #>
 
 <# Speed up downloading #>
 $ProgressPreference = 'SilentlyContinue'
@@ -116,9 +110,36 @@ Else
     "1. Local Administrator software is already existing" 
 }
 
+<# FreeSWITCH is installed but not running yet #>
+
+<# Disable ipv6 profiles #>
 Rename-Item -Path "C:\Program Files\FreeSWITCH\conf\sip_profiles\external-ipv6.xml" -NewName "external-ipv6.xml-disabled"
 Rename-Item -Path "C:\Program Files\FreeSWITCH\conf\sip_profiles\internal-ipv6.xml" -NewName "internal-ipv6.xml-disabled"
 
+<# Disable VP8 codec, leave H264 only. Change default password. #>
+$filename="C:\Program Files\FreeSWITCH\conf\vars.xml"
+$search ='<X-PRE-PROCESS cmd="set" data="default_password=1234"/>'
+$replace='<X-PRE-PROCESS cmd="set" data="default_password=$freeswitchpassword"/>'
+((Get-Content -path $filename -Raw) -replace $search,$replace) | Set-Content -Path $filename
+
+$search ='<X-PRE-PROCESS cmd="set" data="global_codec_prefs=OPUS,G722,PCMU,PCMA,H264,VP8"/>'
+$replace='<X-PRE-PROCESS cmd="set" data="global_codec_prefs=OPUS,G722,PCMU,PCMA,H264"/>'
+((Get-Content -path $filename -Raw) -replace $search,$replace) | Set-Content -Path $filename
+
+$search ='<X-PRE-PROCESS cmd="set" data="outbound_codec_prefs=OPUS,G722,PCMU,PCMA,H264,VP8"/>'
+$replace='<X-PRE-PROCESS cmd="set" data="outbound_codec_prefs=OPUS,G722,PCMU,PCMA,H264"/>'
+((Get-Content -path $filename -Raw) -replace $search,$replace) | Set-Content -Path $filename
+
+$filename="C:\Program Files\FreeSWITCH\conf\autoload_configs\verto.conf.xml"
+$search ='<param name="outbound-codec-string" value="opus,h264,vp8"/>'
+$replace='<param name="outbound-codec-string" value="opus,h264"/>'
+((Get-Content -path $filename -Raw) -replace $search,$replace) | Set-Content -Path $filename
+
+$search ='<param name="inbound-codec-string" value="opus,h264,vp8"/>'
+$replace='<param name="inbound-codec-string" value="opus,h264"/>'
+((Get-Content -path $filename -Raw) -replace $search,$replace) | Set-Content -Path $filename
+
+<# Install certificate into FreeSWITCH #>
 Copy-Item "$dest\wss.pem" -Destination "$pemdest" -Force
 
 <# Enable FreeSWITCH service to start with the system #>
