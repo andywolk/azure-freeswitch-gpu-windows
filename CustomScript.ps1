@@ -112,6 +112,9 @@ Else
     "1. Local Administrator software is already existing" 
 }
 
+Rename-Item -Path "C:\Program Files\FreeSWITCH\conf\sip_profiles\external-ipv6.xml" -NewName "external-ipv6.xml-disabled"
+Rename-Item -Path "C:\Program Files\FreeSWITCH\conf\sip_profiles\internal-ipv6.xml" -NewName "internal-ipv6.xml-disabled"
+
 Copy-Item "$dest\wss.pem" -Destination "$pemdest" -Force
 
 <# Enable FreeSWITCH service to start with the system #>
