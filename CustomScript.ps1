@@ -119,7 +119,7 @@ Rename-Item -Path "C:\Program Files\FreeSWITCH\conf\sip_profiles\internal-ipv6.x
 <# Disable VP8 codec, leave H264 only. Change default password. #>
 $filename="C:\Program Files\FreeSWITCH\conf\vars.xml"
 $search ='<X-PRE-PROCESS cmd="set" data="default_password=1234"/>'
-$replace='<X-PRE-PROCESS cmd="set" data="default_password=$freeswitchpassword"/>'
+$replace="<X-PRE-PROCESS cmd=""set"" data=""default_password=$freeswitchpassword""/>"
 ((Get-Content -path $filename -Raw) -replace $search,$replace) | Set-Content -Path $filename
 
 $search ='<X-PRE-PROCESS cmd="set" data="global_codec_prefs=OPUS,G722,PCMU,PCMA,H264,VP8"/>'
