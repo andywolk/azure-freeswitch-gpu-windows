@@ -15,7 +15,8 @@
       "type": "string",
       "metadata": {
         "description": "Password you need to authorize into FreeSWITCH (Don't use default '1234')"
-      }
+      },
+      "defaultValue": "123456sw"
     },    
     "email": {
       "type": "string",
