@@ -61,11 +61,14 @@ Update-ACMEIdentifier -IdentifierRef fs-verto
 New-ACMECertificate -Generate -IdentifierRef fs-verto -Alias fs-verto-domain
 Submit-ACMECertificate -CertificateRef fs-verto-domain
 Update-ACMECertificate -CertificateRef fs-verto-domain
-Get-ACMECertificate fs-verto-domain -ExportKeyPEM "$dest\key_Pkcs1.pem" -ExportCertificatePEM "$dest\cert.pem" -ExportIssuerPEM "$dest\issuer.pem" -ExportPkcs12 "$dest\cert.pfx"
+Get-ACMECertificate fs-verto-domain -ExportKeyPEM "$dest\key_Pkcs1.pem" -ExportCertificatePEM "$dest\cert.pem" -ExportIssuerPEM "$dest\issuer.pem"
+
+$p=ConvertTo-SecureString '123' –asplaintext –force
+Get-ACMECertificate fs-verto-domain -ExportPkcs12 "$dest\cert.pfx" -CertificatePassword $p
 
 Install-Module -Name PSPKI -Force
 Import-Module PSPKI
-Convert-PfxToPem -InputFile "$dest\cert.pfx" -OutputFile key.pem Pkcs8
+Convert-PfxToPem -InputFile "$dest\cert.pfx" -Password $p -OutputFile key.pem Pkcs8
 
 <# Combine pem files to a bundle #>
 $pem = Get-Content -Path $dest\key.pem
