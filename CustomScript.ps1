@@ -68,7 +68,7 @@ Get-ACMECertificate fs-verto-domain -ExportPkcs12 "$dest\cert.pfx" -CertificateP
 
 Install-Module -Name PSPKI -Force
 Import-Module PSPKI
-$sp=ConvertTo-SecureString $p –asplaintext –force
+$sp=ConvertTo-SecureString $p -asplaintext -force
 Convert-PfxToPem -InputFile "$dest\cert.pfx" -Password $sp -OutputFile "$dest\keycert.pem" -OutputType Pkcs8
 
 <# Combine pem files to a bundle #>
